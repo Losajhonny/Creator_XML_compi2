@@ -1,0 +1,188 @@
+package fs.analizador;
+
+import java_cup.runtime.*;
+import fs.arbol.Expresion.*;
+import otros.Constante;
+
+parser code {:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s) {
+        StringBuilder m = new StringBuilder("Error Sintactico");
+        int yline = s.left, ycol = s.right;
+
+        if(s.left >= 0) {
+        	m.append(" en la Linea " + (s.left));
+        	if(s.right >= 0) {
+        		m.append(" Columna " + (s.right));
+        	}
+        	m.append(". No se esperaba este componente: " + s.value + ".");
+        }
+        System.out.println(m);
+    }
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        syntax_error(s);
+    }
+:}
+
+//--------------------------------------------------------------------------------
+//---------------------------------- TERMINALES ----------------------------------
+//--------------------------------------------------------------------------------
+
+    /*simbolos*/
+terminal String llai,
+    llad,
+    cori,
+    cord,
+    pari,
+    pard,
+
+    punto,
+    ptcoma,
+    dospuntos,
+    coma,
+    inter,
+    igual;
+
+    /*operadores aritmeticos*/
+terminal String mas,
+    menos,
+    por,
+    div,
+    pot,
+    masmas,
+    menmen,
+    UMENOS;
+
+    /*asignacion agrupacion*/
+terminal String masigual,
+    menigual,
+    porigual,
+    divigual;
+
+    /*operadores relacionales*/
+terminal String mayor,
+    menor,
+    mayorigual,
+    menorigual,
+    igualigual,
+    diferente;
+
+    /*operadores logicos*/
+terminal String and,
+    or,
+    not;
+
+    /*palabras reservadas*/
+terminal String pr_var,
+    pr_imprimir,
+    pr_detener,
+    pr_retornar,
+    pr_selecciona,
+    pr_caso,
+    pr_defecto,
+    pr_si,
+    pr_sino,
+    pr_funcion,
+    pr_descendente,
+    pr_ascendente,
+    pr_creararraydesdearchivo,
+    pr_invertir,
+    pr_maximo,
+    pr_minimo,
+    pr_filtrar,
+    pr_buscar,
+    pr_map,
+    pr_reduce,
+    pr_todos,
+    pr_alguno,
+    pr_leergxml,
+    pr_obtenerporetiqueta,
+    pr_obtenerporid,
+    pr_obtenerpornombre,
+    pr_crearventana,
+    pr_crearcontenedor,
+    pr_creartexto,
+    pr_crearcajatexto,
+    pr_crearareatexto,
+    pr_crearcontrolnumerico,
+    pr_creardespegable,
+    pr_crearboton,
+    pr_crearimagen,
+    pr_crearreproductor,
+    pr_crearvideo,
+    pr_alclic,
+    pr_alcargar,
+    pr_alcerrar,
+    pr_verdadero,
+    pr_falso;
+
+terminal String entero,
+    decimal,
+    id,
+    cadena,
+    caracter;
+
+//--------------------------------------------------------------------------------
+//-------------------------------- NO TERMINALES ---------------------------------
+//--------------------------------------------------------------------------------
+
+non terminal Object S;
+non terminal Operacion EXP;
+
+//--------------------------------------------------------------------------------
+//--------------------------------- PRECEDENCIA ----------------------------------
+//--------------------------------------------------------------------------------
+
+precedence left and;
+precedence left or;
+precedence right not;
+precedence left igualigual, diferente, mayor, menor, mayorigual, menorigual;
+precedence left mas, menos;
+precedence left por, div;
+precedence right pot;
+precedence left masmas, menmen;
+precedence right UMENOS;
+
+//--------------------------------------------------------------------------------
+//---------------------------------- GRAMATICA -----------------------------------
+//--------------------------------------------------------------------------------
+
+start with S;
+
+S   ::= EXP
+    |
+    ;
+
+EXP ::= EXP:n1 mas:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.MAS, opleft, opright); :}
+    |   EXP:n1 menos:op EXP:n2   {:RESULT = new Aritmetica(n1, n2, Operador.MENOS, opleft, opright); :}
+    |   EXP:n1 por:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.POR, opleft, opright); :}
+    |   EXP:n1 div:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.DIV, opleft, opright); :}
+    |   EXP:n1 pot:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.POT, opleft, opright); :}
+    |   EXP:n masmas:op          {:RESULT = new Aritmetica(n, Operador.MASMAS, opleft, opright); :}
+    |   EXP:n menmen:op          {:RESULT = new Aritmetica(n, Operador.MENMEN, opleft, opright); :}
+    |   menos:op EXP:n           {:RESULT = new Aritmetica(n, Operador.MENOS, opleft, opright); :} %prec UMENOS
+
+    |   EXP:n1 igualigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.IGUALIGUAL, opleft, opright); :}
+    |   EXP:n1 diferente:op EXP:n2  {:RESULT = new Relacional(n1, n2, Operador.DIFERENTE, opleft, opright); :}
+    |   EXP:n1 mayor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MAYOR, opleft, opright); :}
+    |   EXP:n1 menor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MENOR, opleft, opright); :}
+    |   EXP:n1 mayorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MAYORIGUAL, opleft, opright); :}
+    |   EXP:n1 menorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MENORIGUAL, opleft, opright); :}
+    
+    |   EXP:n1 and:op EXP:n2      {:RESULT = new Logica(n1, n2, Operador.AND, opleft, opright); :}
+    |   EXP:n1 or:op EXP:n2       {:RESULT = new Logica(n1, n2, Operador.OR, opleft, opright); :}
+    |   not:op EXP:n              {:RESULT = new Logica(n, Operador.NOT, opleft, opright); :}
+    |   entero:n                {:RESULT = new Literal(Constante.ENTERO, n, nleft, nright); :}
+    |   decimal:n               {:RESULT = new Literal(Constante.DECIMAL, n, nleft, nright); :}
+    |   cadena:n                {:RESULT = new Literal(Constante.CADENA, n, nleft, nright); :}
+    |   caracter:n              {:RESULT = new Literal(Constante.CARACTER, n, nleft, nright); :}
+    |   pr_verdadero:n          {:RESULT = new Literal(Constante.BOOLEANO, n, nleft, nright); :}
+    |   pr_falso:n              {:RESULT = new Literal(Constante.BOOLEANO, n, nleft, nright); :}
+    ;

@@ -1,0 +1,390 @@
+package gxml.analizador;
+
+import java_cup.runtime.*;
+import gxml.arbol.*;
+import otros.Constante;
+
+parser code {:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s) {
+        StringBuilder m = new StringBuilder("Error Sintactico");
+        int yline = s.left, ycol = s.right;
+
+        if(s.left >= 0) {
+        	m.append(" en la Linea " + (s.left));
+        	if(s.right >= 0) {
+        		m.append(" Columna " + (s.right));
+        	}
+        	m.append(". No se esperaba este componente: " + s.value + ".");
+        }
+        System.out.println(m);
+        Constante.consola += String.valueOf(m) + "\n";
+    }
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        syntax_error(s);
+    }
+:}
+
+//--------------------------------------------------------------------------------
+//---------------------------------- TERMINALES ----------------------------------
+//--------------------------------------------------------------------------------
+
+    /*simbolos*/
+    terminal String open,
+    close,
+    slash,
+    igual;
+
+    /*componentes o etiquetas*/
+    terminal String pr_importar,
+    pr_ventana,
+    pr_contenedor,
+    pr_texto,
+    pr_control,
+    pr_dato,
+    pr_listadato,
+    pr_defecto,
+    pr_multimedia,
+    pr_boton,
+    pr_enviar;
+
+    /*atributos*/
+    terminal String pr_id,
+    pr_tipo,
+    pr_color,
+    pr_accioninicial,
+    pr_accionfinal,
+    pr_x,
+    pr_y,
+    pr_alto,
+    pr_ancho,
+    pr_borde,
+    pr_nombre,
+    pr_fuente,
+    pr_tam,
+    pr_negrita,
+    pr_cursiva,
+    pr_maximo,
+    pr_minimo,
+    pr_accion,
+    pr_referencia,
+    pr_path,
+    pr_autoreproduccion;
+
+    terminal String entero,
+    decimal, pr_verdadero, pr_falso;
+
+    terminal String cadena,
+    //todo,
+    llamada;
+
+
+//--------------------------------------------------------------------------------
+//-------------------------------- NO TERMINALES ---------------------------------
+//--------------------------------------------------------------------------------
+
+non terminal Object S;
+non terminal Object IMPORTACIONES, IMPORTAR;
+non terminal Object VENTANAS, VENTANA, ELEMENTOS_VENTANA, ELEMENTO_VENTANA;
+non terminal Object CONTENEDORES, CONTENEDOR, ELEMENTOS_CONTENEDOR, ELEMENTO_CONTENEDOR;
+
+non terminal Object INSTRUCCIONES, INSTRUCCION;
+
+non terminal Object TEXTO, ELEMENTOS_TEXTO, ELEMENTO_TEXTO;
+non terminal Object CONTROLADOR, ELEMENTOS_CONTROLADOR, ELEMENTO_CONTROLADOR;
+
+non terminal Object ESPECIALES, ESPECIAL;
+non terminal Object LISTA_DATO, DATOS, DATO;
+non terminal Object DEFECTO;
+
+non terminal Object MULTIMEDIA, ELEMENTOS_MULTIMEDIA, ELEMENTO_MULTIMEDIA;
+non terminal Object BOTON, ELEMENTOS_BOTON, ELEMENTO_BOTON;
+non terminal Object ENVIAR, ELEMENTOS_ENVIAR, ELEMENTO_ENVIAR;
+
+non terminal Elemento ID, TIPO, COLOR, ACCIONINI, ACCIONFIN;
+non terminal Elemento X, Y, ALTO, ANCHO, BORDE;
+non terminal Elemento NOMBRE, FUENTE, TAM, NEGRITA, CURSIVA;
+non terminal Elemento MAXIMO, MINIMO, ACCION, REFERENCIA;
+non terminal Elemento PATH, AUTO_REPRODUCCION;
+
+//--------------------------------------------------------------------------------
+//---------------------------------- GRAMATICA -----------------------------------
+//--------------------------------------------------------------------------------
+
+start with S;
+
+/***************************  INICIO  ***************************/
+
+    S   ::= IMPORTACIONES VENTANAS
+        |   VENTANAS
+        |
+        ;
+
+/*************************** IMPORTAR  ***************************/
+
+    IMPORTACIONES   ::= IMPORTACIONES IMPORTAR
+                    |   IMPORTAR
+                    ;
+
+    IMPORTAR    ::= open pr_importar close /*direccion*/ open slash pr_importar close
+                ;
+
+/***************************  VENTANA  ***************************/
+
+    VENTANAS    ::= VENTANAS VENTANA
+                |   VENTANA
+                ;
+
+    VENTANA     ::= open pr_ventana ELEMENTOS_VENTANA close CONTENEDORES open slash pr_ventana close
+                |   open pr_ventana ELEMENTOS_VENTANA close open slash pr_ventana close
+                ;
+
+    ELEMENTOS_VENTANA   ::= ELEMENTOS_VENTANA ELEMENTO_VENTANA
+                        |   ELEMENTO_VENTANA
+                        ;
+
+    ELEMENTO_VENTANA    ::= ID
+                        |   TIPO
+                        |   COLOR
+                        |   ACCIONINI
+                        |   ACCIONFIN
+                        ;
+
+/************************** CONTENEDOR ***************************/
+
+    CONTENEDORES    ::= CONTENEDORES CONTENEDOR
+                    |   CONTENEDOR
+                    ;
+    
+    CONTENEDOR  ::= open pr_contenedor ELEMENTOS_CONTENEDOR close INSTRUCCIONES open slash pr_contenedor close
+                |   open pr_contenedor ELEMENTOS_CONTENEDOR close open slash pr_contenedor close
+                ;
+
+    ELEMENTOS_CONTENEDOR    ::= ELEMENTOS_CONTENEDOR ELEMENTO_CONTENEDOR
+                            |   ELEMENTO_CONTENEDOR
+                            ;
+
+    ELEMENTO_CONTENEDOR     ::= ID
+                            |   X
+                            |   Y
+                            |   ALTO
+                            |   ANCHO
+                            |   COLOR
+                            |   BORDE
+                            ;
+
+    INSTRUCCIONES   ::= INSTRUCCIONES INSTRUCCION
+                    |   INSTRUCCION
+                    ;
+
+    INSTRUCCION     ::= TEXTO
+                    |   CONTROLADOR
+                    |   MULTIMEDIA
+                    |   BOTON
+                    |   ENVIAR
+                    ;
+
+/****************************   TEXTO  ***************************/
+
+    TEXTO   ::= open pr_texto ELEMENTOS_TEXTO close /*todo*/ open slash pr_texto close
+            ;
+
+    ELEMENTOS_TEXTO     ::= ELEMENTOS_TEXTO ELEMENTO_TEXTO
+                        |   ELEMENTO_TEXTO
+                        ;
+
+    ELEMENTO_TEXTO  ::= NOMBRE
+                    |   X
+                    |   Y
+                    |   FUENTE
+                    |   TAM
+                    |   COLOR
+                    |   NEGRITA
+                    |   CURSIVA
+                    ;
+
+/************************** CONTROLADOR **************************/
+
+    CONTROLADOR     ::= open pr_control ELEMENTOS_CONTROLADOR close ESPECIALES open slash pr_control close
+                    |   open pr_control ELEMENTOS_CONTROLADOR close open slash pr_control close
+                    ;
+
+    ELEMENTOS_CONTROLADOR   ::= ELEMENTOS_CONTROLADOR ELEMENTO_CONTROLADOR
+                            |   ELEMENTO_CONTROLADOR
+                            ;
+
+    ELEMENTO_CONTROLADOR    ::= TIPO
+                            |   NOMBRE
+                            |   X
+                            |   Y
+                            |   ALTO
+                            |   ANCHO
+                            |   FUENTE
+                            |   TAM
+                            |   COLOR
+                            |   NEGRITA
+                            |   CURSIVA
+                            |   MAXIMO
+                            |   MINIMO
+                            |   ACCION
+                            ;
+
+    ESPECIALES  ::= ESPECIALES ESPECIAL
+                |   ESPECIAL
+                ;
+
+    ESPECIAL    ::= LISTA_DATO
+                |   DEFECTO
+                ;
+
+/************************** LISTA_DATO ***************************/
+
+    LISTA_DATO  ::= open pr_listadato ACCION close DATOS open slash pr_listadato close
+                |   open pr_listadato close DATOS open slash pr_listadato close
+                ;
+
+    DATOS   ::= DATOS DATO
+            |   DATO
+            ;
+
+/***************************    DATO   ***************************/
+
+    DATO    ::= open pr_dato close entero open slash pr_dato close
+            |   open pr_dato close decimal open slash pr_dato close
+            |   open pr_dato close /*todo*/ open slash pr_dato close;
+
+/***************************  DEFECTO  ***************************/
+    
+    DEFECTO     ::= open pr_defecto close entero open slash pr_defecto close
+                |   open pr_defecto close decimal open slash pr_defecto close
+                |   open pr_defecto close /*todo*/ open slash pr_defecto close
+                ;
+
+/************************** MULTIMEDIA ***************************/
+    MULTIMEDIA  ::= open pr_multimedia ELEMENTOS_MULTIMEDIA close open slash pr_multimedia close
+                ;
+
+    ELEMENTOS_MULTIMEDIA    ::= ELEMENTOS_MULTIMEDIA ELEMENTO_MULTIMEDIA
+                            |   ELEMENTO_MULTIMEDIA
+                            ;
+
+    ELEMENTO_MULTIMEDIA     ::= PATH
+                            |   TIPO
+                            |   NOMBRE
+                            |   X
+                            |   Y
+                            |   ALTO
+                            |   ANCHO
+                            |   AUTO_REPRODUCCION
+                            ;
+
+/***************************   BOTON   ***************************/
+
+    BOTON   ::= open pr_boton ELEMENTOS_BOTON close TEXTO open slash pr_boton close
+            |   open pr_boton ELEMENTOS_BOTON close /*todo*/ open slash pr_boton close
+            ;
+
+    ELEMENTOS_BOTON    ::= ELEMENTOS_BOTON ELEMENTO_BOTON
+                        |   ELEMENTO_BOTON
+                        ;
+
+    ELEMENTO_BOTON     ::= NOMBRE
+                        |   X
+                        |   Y
+                        |   ALTO
+                        |   ANCHO
+                        |   REFERENCIA
+                        |   ACCION
+                        ;
+
+/***************************   ENVIAR  ***************************/
+
+    ENVIAR  ::= open pr_enviar ELEMENTOS_ENVIAR close TEXTO open slash pr_enviar close
+            |   open pr_enviar ELEMENTOS_ENVIAR close /*todo*/ open slash pr_enviar close
+            ;
+
+    ELEMENTOS_ENVIAR    ::= ELEMENTOS_ENVIAR ELEMENTO_ENVIAR
+                        |   ELEMENTO_ENVIAR
+                        ;
+
+    ELEMENTO_ENVIAR     ::= NOMBRE:n
+                        |   X:n
+                        |   Y:n
+                        |   ALTO:n
+                        |   ANCHO:n
+                        |   REFERENCIA:n
+                        |   ACCION:n
+                        ;
+
+/*************************** ELEMENTOS ***************************/
+
+    ID          ::= pr_id:n1 igual:n2 cadena:n3             {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    TIPO        ::= pr_tipo:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    COLOR       ::= pr_color:n1 igual:n2 cadena:n3          {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    ACCIONINI   ::= pr_accioninicial:n1 igual:n2 llamada:n3 {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    ACCIONFIN   ::= pr_accionfinal:n1 igual:n2 llamada:n3   {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    X           ::= pr_x:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_x:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    Y           ::= pr_y:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_y:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    ALTO        ::= pr_alto:n1 igual:n2 entero:n3           {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_alto:n1 igual:n2 decimal:n3          {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    ANCHO       ::= pr_ancho:n1 igual:n2 entero:n3          {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :} 
+                |   pr_ancho:n1 igual:n2 decimal:n3         {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    BORDE       ::= pr_borde:n1 igual:n2 pr_verdadero:n3    {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_borde:n1 igual:n2 pr_falso:n3        {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                ;
+
+    NOMBRE      ::= pr_nombre:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    FUENTE      ::= pr_fuente:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    TAM         ::= pr_tam:n1 igual:n2 entero:n3            {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_tam:n1 igual:n2 decimal:n3           {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    NEGRITA     ::= pr_negrita:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_negrita:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                ;
+
+    CURSIVA     ::= pr_cursiva:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_cursiva:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                ;
+
+    MAXIMO      ::= pr_maximo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_maximo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    MINIMO      ::= pr_minimo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
+                |   pr_minimo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+                ;
+
+    ACCION      ::= pr_accion:n1 igual:n2 llamada:n3        {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    REFERENCIA  ::= pr_referencia:n1 igual:n2 cadena:n3     {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    PATH        ::= pr_path:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+
+    AUTO_REPRODUCCION   ::= pr_autoreproduccion:n1 igual:n2 pr_verdadero:n3 {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                        |   pr_autoreproduccion:n1 igual:n2 pr_falso:n3     {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+                        ;
