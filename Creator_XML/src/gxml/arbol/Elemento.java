@@ -5,19 +5,21 @@
  */
 package gxml.arbol;
 
+import fs.arbol.Expresion.Operaciones.Operacion.Tipo;
+
 /**
  *
  * @author Jhona
  */
 public class Elemento {
     public String id;
-    public int tipo;
-    public Object valor;
+    public String valor;
     
+    public Tipo tipo;
     public int line;
     public int colm;
     
-    public Elemento(String id, int tipo, Object valor, int line, int colm){
+    public Elemento(String id, Tipo tipo, String valor, int line, int colm){
         this.id = id;
         this.tipo = tipo;
         this.valor = valor;

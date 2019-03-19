@@ -6,6 +6,7 @@
 package fs.arbol.Expresion;
 
 import entorno.*;
+import fs.arbol.Expresion.Operaciones.Operacion;
 
 /**
  *
@@ -13,10 +14,11 @@ import entorno.*;
  */
 public class Literal extends Operacion implements Expresion {
     
-    public int tipo;        //Tipo comun que es entero, decimal, booleano, caracter, cadena
+    public Tipo tipo;
     public Object valor;
+    public Object val_ant;
     
-    public Literal(int tipo, Object valor, int line, int colm) {
+    public Literal(Tipo tipo, Object valor, int line, int colm) {
         super(line, colm);
         this.tipo = tipo;
         this.valor = valor;
@@ -25,10 +27,5 @@ public class Literal extends Operacion implements Expresion {
     @Override
     public Object evaluar(Entorno ent) {
         return this;
-    }
-
-    @Override
-    public int getTipo(Literal izq, Literal der) {
-        return tipo;
     }
 }

@@ -1,0 +1,42 @@
+<lista>
+    <principal>
+         <CTNombre>"Julio Arango"</CTNombre>
+         <CPotencia>3125</CPotencia>
+         <CFactorial>5040</CFactorial>
+         <CInvertido>743032153</CInvertido>
+         <CMCD>2</CMCD>
+         <CFibonacci>4181</CFibonacci>
+    </principal>
+    <principal>
+          <CTNombre>"Julia Sierra"</CTNombre>
+         <CPotencia>3125</CPotencia>
+         <CFactorial>5040</CFactorial>
+         <CInvertido>743032153</CInvertido>
+         <CMCD>2</CMCD>
+         <CFibonacci>4181</CFibonacci>
+    </principal>
+    <principal>
+         <CTNombre>"Alba Chinchilla"</CTNombre>
+         <CPotencia>3125</CPotencia>
+         <CFactorial>5040</CFactorial>
+         <CInvertido>743032153</CInvertido>
+         <CMCD>2</CMCD>
+         <CFibonacci>4181</CFibonacci>
+    </principal>
+    <principal>
+         <CTNombre>"Gustavo Gamboa"</CTNombre>
+         <CPotencia>3125</CPotencia>
+         <CFactorial>5040</CFactorial>
+         <CInvertido>743032153</CInvertido>
+         <CMCD>2</CMCD>
+         <CFibonacci>4181</CFibonacci>
+    </principal>
+    <principal>
+         <CTNombre>"Juan Carlos Alberto"</CTNombre>
+         <CPotencia>3125</CPotencia>
+         <CFactorial>5040</CFactorial>
+         <CInvertido>743032153</CInvertido>
+         <CMCD>2</CMCD>
+         <CFibonacci>4181</CFibonacci>
+    </principal>
+</lista>

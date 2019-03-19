@@ -15,11 +15,13 @@ import otros.Constante;
 %state CADENA
 %state CARACTER
 %state LLAMADA
-//%state TODO
-
+%state TODO
+%state UNI_COMMENT1
+%state MUL_COMMENT1
 
 %init{
     yyline = 1;
+    yychar = 1;
 %init}
 
 %{
@@ -47,12 +49,6 @@ ESPACIOS        =   [ \r\n\t\f]
 ENTERO          =   [0-9]+
 DECIMAL         =   [0-9]+"."[0-9]+
 
-/*DIGITO          =   [0-9]
-LETRAS          =   [A-Za-z]
-VOCALMIN        =   ["á"|"é"|"í"|"ó"|"ú"|"ä"|"ë"|"ï"|"ö"|"ü"|"à"|"è"|"ì"|"ò"|"ù"|"ñ"]
-VOCALMAX        =   ["Á"|"É"|"Í"|"Ó"|"Ú"|"Ä"|"Ë"|"Ï"|"Ö"|"Ü"|"À"|"È"|"Ì"|"Ò"|"Ù"|"Ñ"]
-SIMBOLO         =   ["^"|"`"|"~"|\\|"¬"|"|"|\'|"¿"|"+"|"´"|"{"|"}"|"-"|"."|","|":"|";"|"_"|"["|"]"|"¨"|"*"|"?"|"¡"|"="|")"|"("|"/"|"&"|"%"|"$"|"#"|\"|"!"|")"]
-*/
 UNICOMMENT      =   "##".*[\r\n|\n|\r]
 MULCOMMENT      =   "#$""#"*([^$#]|[^$]"#"|"$"[^#])*"$"*"$#"
 
@@ -60,19 +56,17 @@ MULCOMMENT      =   "#$""#"*([^$#]|[^$]"#"|"$"[^#])*"$"*"$#"
 
 <YYINITIAL>
 {
+    {UNICOMMENT}        {}
+    {MULCOMMENT}        {}
+
     /*estados*/
     "\""                { yybegin(CADENA); cadena=""; }
     "\'"                { yybegin(CARACTER); cadena=""; }
     "{"                 { yybegin(LLAMADA); cadena=""; }
-    //"> "                { yybegin(TODO); ban=0; cadena=""; }
-    //">\r"               { yybegin(TODO); ban=0; cadena=""; }
-    //">\t"               { yybegin(TODO); ban=0; cadena=""; }
-    //">\f"               { yybegin(TODO); ban=0; cadena=""; }
-    //">\n"               { yybegin(TODO); ban=0; cadena=""; }
+    ">"                 { yybegin(TODO); ban=0; cadena=""; }
     
     /*simbolos*/
     "<"                 { return symbol(sym.open); }
-    ">"                 { return symbol(sym.close); }
     "/"                 { return symbol(sym.slash); }
     "="                 { return symbol(sym.igual); }
 
@@ -115,17 +109,17 @@ MULCOMMENT      =   "#$""#"*([^$#]|[^$]"#"|"$"[^#])*"$"*"$#"
     "verdadero"         { return symbol(sym.pr_verdadero); }
     "falso"             { return symbol(sym.pr_falso); }
 
-
+    \n                  { yychar=1; }
 
     {ENTERO}            { return symbol(sym.entero); }
     {DECIMAL}           { return symbol(sym.decimal); }
-
-    {UNICOMMENT}        {}
-    {MULCOMMENT}        {}
     
     {ESPACIOS}          {}
 
-    .                   {Constante.consola += "Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar+"\n";}
+    .                   {
+                            otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), "", "Este es un error lexico: "+yytext(), Constante.archivo, yyline, yychar);
+                            Constante.errores.add(err);
+                        }
 }
 
 <CADENA>
@@ -140,6 +134,17 @@ MULCOMMENT      =   "#$""#"*([^$#]|[^$]"#"|"$"[^#])*"$"*"$#"
     \\r            { cadena+=String.valueOf("\r"); }
     \              { }
     \\             { cadena+=String.valueOf("\\"); }
+    \n             { 
+                        otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, "Este es un error lexico: \\n", yyline, yychar); 
+                        otros.Error.agregarError(err);
+                        yychar=1;
+                    }
+    .                   {
+                            otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
 }
 
 <CARACTER>
@@ -154,17 +159,61 @@ MULCOMMENT      =   "#$""#"*([^$#]|[^$]"#"|"$"[^#])*"$"*"$#"
     \\r            { cadena+=String.valueOf("\r"); }
     \              { }
     \\             { cadena+=String.valueOf("\\"); }
+    \n             { 
+                        otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, "Este es un error lexico: \\n", yyline, yychar);
+                        otros.Error.agregarError(err); 
+                        yychar=1;
+                    }
+    .                   {
+                            otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }     
 }
 
-/*<TODO>
+<TODO>
 {
-    "<"             { yybegin(YYINITIAL); if(ban==0) {  } else { return symbol(sym.todo, cadena); } }
-    [^"<" \r\n\t\f]+ { ban=1; cadena+=String.valueOf(yytext()); }
-    [ \r\n\t\f]     { cadena+=String.valueOf(yytext()); }
-}*/
+    "<"                { yybegin(YYINITIAL); if(ban==0) { return symbol(sym.nada, cadena); } else { return symbol(sym.todo, cadena); } }
+    <<EOF>>            { yybegin(YYINITIAL); return symbol(sym.fin, cadena); }
+    "#"                { ban=1; cadena+=String.valueOf(yytext()); }
+    "##"               { yybegin(UNI_COMMENT1); }
+    "#$"               { yybegin(MUL_COMMENT1); }
+    [\r\t\f]           { }
+    [ ]                { cadena+=String.valueOf(yytext()); }
+    \"                 { ban=1; cadena+="\\\""; }
+    \n                 { yychar=1; }
+    [^"<""#" \n\r\t\f\"]+ { ban=1; cadena+=String.valueOf(yytext()); }
+    .                   {
+                            otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
+}
 
 <LLAMADA>
 {
     "}"             { yybegin(YYINITIAL); return symbol(sym.llamada, cadena); }
-    [^"}"]+         { cadena+=String.valueOf(yytext()); }
+    [^"}"\n]+       { cadena+=String.valueOf(yytext()); }
+    \n              { yychar=1; }
+    .                   {
+                            otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
+}
+
+<UNI_COMMENT1>
+{
+    [\r\n|\n|\r]    { yybegin(TODO); }
+    .               {}
+}
+
+<MUL_COMMENT1>
+{
+    "$#"            { yybegin(TODO); }
+    \n              { yychar=1; }
+    .               { }
 }

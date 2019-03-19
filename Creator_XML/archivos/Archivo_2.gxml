@@ -1,0 +1,12 @@
+
+<ventana id="init" tipo="principal" color="#61a97d">
+
+<contenedor id="cont" x=10 y=20 color="#6d8fd5">
+
+<texto nombre="txt1" x=10 y=20 color="#000000" >
+Bienvenidos al app
+</texto>
+
+</contenedor>
+
+</ventana>

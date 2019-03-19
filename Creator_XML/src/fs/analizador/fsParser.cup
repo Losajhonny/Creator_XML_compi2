@@ -1,10 +1,29 @@
 package fs.analizador;
 
+import entorno.Entorno;
 import java_cup.runtime.*;
+import fs.arbol.AstFs;
 import fs.arbol.Expresion.*;
+import fs.arbol.Expresion.Operaciones.*;
+import fs.arbol.Expresion.Operaciones.Operacion.Operador;
+import fs.arbol.Expresion.Operaciones.Operacion.Tipo;
+import fs.arbol.Importacion;
+import fs.arbol.Instruccion.*;
+import fs.arbol.Instruccion.Seleccion.*;
+import fs.arbol.Instruccion.Declaracion.*;
+import fs.arbol.Instruccion.Funcion.*;
+import fs.arbol.Instruccion.FuncionArreglo.*;
+import fs.arbol.Instruccion.FuncionInterfaz.*;
 import otros.Constante;
+import java.util.LinkedList;
 
 parser code {:
+
+    public static AstFs Syntax_tree;
+
+    public static String archivo;
+    public static boolean ban = true;
+
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
@@ -19,7 +38,10 @@ parser code {:
         	}
         	m.append(". No se esperaba este componente: " + s.value + ".");
         }
-        System.out.println(m);
+
+            Object valor = (s.value != null)? s.value: "Fin de archivo";
+            otros.Error err = new otros.Error(Constante.FS, Constante.SINTACTICO, "", Constante.ent_temporal.ambito, " No se esperaba este componente: " + valor, Constante.archivo, s.left, s.right);
+            otros.Error.agregarError(err);
     }
 
     /**
@@ -36,119 +58,144 @@ parser code {:
 //--------------------------------------------------------------------------------
 
     /*simbolos*/
-terminal String llai,
-    llad,
-    cori,
-    cord,
-    pari,
-    pard,
+    terminal String llai,
+        llad,
+        cori,
+        cord,
+        pari,
+        pard,
 
-    punto,
-    ptcoma,
-    dospuntos,
-    coma,
-    inter,
-    igual;
+        punto,
+        ptcoma,
+        dospuntos,
+        coma,
+        inter,
+        igual;
 
-    /*operadores aritmeticos*/
-terminal String mas,
-    menos,
-    por,
-    div,
-    pot,
-    masmas,
-    menmen,
-    UMENOS;
+        /*operadores aritmeticos*/
+    terminal String mas,
+        menos,
+        por,
+        div,
+        pot,
+        masmas,
+        menmen,
+        UMENOS;
 
-    /*asignacion agrupacion*/
-terminal String masigual,
-    menigual,
-    porigual,
-    divigual;
+        /*asignacion agrupacion*/
+    terminal String masigual,
+        menigual,
+        porigual,
+        divigual;
 
-    /*operadores relacionales*/
-terminal String mayor,
-    menor,
-    mayorigual,
-    menorigual,
-    igualigual,
-    diferente;
+        /*operadores relacionales*/
+    terminal String mayor,
+        menor,
+        mayorigual,
+        menorigual,
+        igualigual,
+        diferente;
 
-    /*operadores logicos*/
-terminal String and,
-    or,
-    not;
+        /*operadores logicos*/
+    terminal String and,
+        or,
+        not;
 
-    /*palabras reservadas*/
-terminal String pr_var,
-    pr_imprimir,
-    pr_detener,
-    pr_retornar,
-    pr_selecciona,
-    pr_caso,
-    pr_defecto,
-    pr_si,
-    pr_sino,
-    pr_funcion,
-    pr_descendente,
-    pr_ascendente,
-    pr_creararraydesdearchivo,
-    pr_invertir,
-    pr_maximo,
-    pr_minimo,
-    pr_filtrar,
-    pr_buscar,
-    pr_map,
-    pr_reduce,
-    pr_todos,
-    pr_alguno,
-    pr_leergxml,
-    pr_obtenerporetiqueta,
-    pr_obtenerporid,
-    pr_obtenerpornombre,
-    pr_crearventana,
-    pr_crearcontenedor,
-    pr_creartexto,
-    pr_crearcajatexto,
-    pr_crearareatexto,
-    pr_crearcontrolnumerico,
-    pr_creardespegable,
-    pr_crearboton,
-    pr_crearimagen,
-    pr_crearreproductor,
-    pr_crearvideo,
-    pr_alclic,
-    pr_alcargar,
-    pr_alcerrar,
-    pr_verdadero,
-    pr_falso;
+        /*palabras reservadas*/
+    terminal String pr_var,
+        pr_importar,
+        pr_imprimir,
+        pr_detener,
+        pr_retornar,
+        pr_selecciona,
+        pr_caso,
+        pr_defecto,
+        pr_si,
+        pr_sino,
+        pr_funcion,
+        pr_descendente,
+        pr_ascendente,
+        pr_creararraydesdearchivo,
+        pr_invertir,
+        pr_maximo,
+        pr_minimo,
+        pr_filtrar,
+        pr_buscar,
+        pr_map,
+        pr_reduce,
+        pr_todos,
+        pr_alguno,
+        pr_leergxml,
+        pr_obtenerporetiqueta,
+        pr_obtenerporid,
+        pr_obtenerpornombre,
+        pr_crearventana,
+        pr_crearcontenedor,
+        pr_creartexto,
+        pr_crearcajatexto,
+        pr_crearareatexto,
+        pr_crearcontrolnumerico,
+        pr_creardespegable,
+        pr_crearboton,
+        pr_crearimagen,
+        pr_crearreproductor,
+        pr_crearvideo,
+        pr_alclic,
+        pr_alcargar,
+        pr_alcerrar,
+        pr_verdadero,
+        pr_falso,
+        pr_nulo;
 
-terminal String entero,
-    decimal,
-    id,
-    cadena,
-    caracter;
+    terminal String entero,
+        decimal,
+        id,
+        cadena;
 
 //--------------------------------------------------------------------------------
 //-------------------------------- NO TERMINALES ---------------------------------
 //--------------------------------------------------------------------------------
 
-non terminal Object S;
-non terminal Operacion EXP;
+    non terminal Object S, VALOR, ELEMENTO, FUN_NAT_INT;
+    non terminal AstFs INICIO;
+    non terminal Importacion IMPORTACION;
+    non terminal SSi SSI, SINOSI;
+    non terminal Par PAR;
+    non terminal Arreglo ARREGLO;
+    non terminal Objeto OBJETO;
+    non terminal Operador OPASIG, OPNAT;
+    non terminal Caso CASO, DEFECTO;
+    non terminal Declaracion PARAM;
+    non terminal Funcion FUNCION;
+    non terminal Expresion EXP, LOGICO, RELACIONAL, TERNARIO, CALL_FUNCION, NAT_ARR, CALL_NAT_ARR2, CALL_NAT_INT;
+
+    non terminal Instruccion INSTRUCCION, DECLARACION, ASIGNACION, IMPRIMIR, DETENER, 
+    RETORNAR, SI, SINO, SELECCIONA, CALL_NAT_WOT;
+
+    non terminal LinkedList<Object> ELEMENTOS;
+    non terminal LinkedList<Importacion> IMPORTACIONES;
+    non terminal LinkedList<Caso> LCASOS;
+    non terminal LinkedList<Id> LID;
+    non terminal LinkedList<Expresion> LEXP, CALL_NAT_ARR;
+    non terminal LinkedList<Par> LPARES;
+    non terminal LinkedList<Instruccion> INSTRUCCIONES;
+    non terminal LinkedList<SSi> LSINOSI;
+    non terminal LinkedList<Declaracion> LPARAMS;
 
 //--------------------------------------------------------------------------------
 //--------------------------------- PRECEDENCIA ----------------------------------
 //--------------------------------------------------------------------------------
 
-precedence left and;
-precedence left or;
-precedence right not;
-precedence left igualigual, diferente, mayor, menor, mayorigual, menorigual;
-precedence left mas, menos;
-precedence left por, div;
-precedence right pot;
-precedence left masmas, menmen;
-precedence right UMENOS;
+    precedence right inter;
+    precedence left or;
+    precedence left and;
+    precedence right not;
+    precedence left igualigual, diferente;
+    precedence left mayor, menor, mayorigual, menorigual;
+    precedence left mas, menos;
+    precedence left por, div;
+    precedence right pot;
+    precedence right masmas, menmen, UMENOS;
 
 //--------------------------------------------------------------------------------
 //---------------------------------- GRAMATICA -----------------------------------
@@ -156,33 +203,321 @@ precedence right UMENOS;
 
 start with S;
 
-S   ::= EXP
-    |
+S   ::= INICIO:n1   {:Syntax_tree = n1;:}
+    |               {:Syntax_tree = null;:}
     ;
 
-EXP ::= EXP:n1 mas:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.MAS, opleft, opright); :}
-    |   EXP:n1 menos:op EXP:n2   {:RESULT = new Aritmetica(n1, n2, Operador.MENOS, opleft, opright); :}
-    |   EXP:n1 por:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.POR, opleft, opright); :}
-    |   EXP:n1 div:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.DIV, opleft, opright); :}
-    |   EXP:n1 pot:op EXP:n2     {:RESULT = new Aritmetica(n1, n2, Operador.POT, opleft, opright); :}
-    |   EXP:n masmas:op          {:RESULT = new Aritmetica(n, Operador.MASMAS, opleft, opright); :}
-    |   EXP:n menmen:op          {:RESULT = new Aritmetica(n, Operador.MENMEN, opleft, opright); :}
-    |   menos:op EXP:n           {:RESULT = new Aritmetica(n, Operador.MENOS, opleft, opright); :} %prec UMENOS
+    INICIO  ::= IMPORTACIONES:n1 ELEMENTOS:n2       {:RESULT = new AstFs(n1, n2);:}
+            |   ELEMENTOS:n1                        {:RESULT = new AstFs(n1);:}
+            |   IMPORTACIONES:n1                    {:RESULT = new AstFs(n1, new LinkedList<Object>());:}
+            ;
 
-    |   EXP:n1 igualigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.IGUALIGUAL, opleft, opright); :}
-    |   EXP:n1 diferente:op EXP:n2  {:RESULT = new Relacional(n1, n2, Operador.DIFERENTE, opleft, opright); :}
-    |   EXP:n1 mayor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MAYOR, opleft, opright); :}
-    |   EXP:n1 menor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MENOR, opleft, opright); :}
-    |   EXP:n1 mayorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MAYORIGUAL, opleft, opright); :}
-    |   EXP:n1 menorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MENORIGUAL, opleft, opright); :}
-    
-    |   EXP:n1 and:op EXP:n2      {:RESULT = new Logica(n1, n2, Operador.AND, opleft, opright); :}
-    |   EXP:n1 or:op EXP:n2       {:RESULT = new Logica(n1, n2, Operador.OR, opleft, opright); :}
-    |   not:op EXP:n              {:RESULT = new Logica(n, Operador.NOT, opleft, opright); :}
-    |   entero:n                {:RESULT = new Literal(Constante.ENTERO, n, nleft, nright); :}
-    |   decimal:n               {:RESULT = new Literal(Constante.DECIMAL, n, nleft, nright); :}
-    |   cadena:n                {:RESULT = new Literal(Constante.CADENA, n, nleft, nright); :}
-    |   caracter:n              {:RESULT = new Literal(Constante.CARACTER, n, nleft, nright); :}
-    |   pr_verdadero:n          {:RESULT = new Literal(Constante.BOOLEANO, n, nleft, nright); :}
-    |   pr_falso:n              {:RESULT = new Literal(Constante.BOOLEANO, n, nleft, nright); :}
-    ;
+/***************************************************************************************************************************
+******************************************************* IMPORTACION ********************************************************
+****************************************************************************************************************************/
+
+    IMPORTACIONES   ::= IMPORTACIONES:n1 IMPORTACION:n2     {:RESULT = n1; RESULT.add(n2);:}
+                    |   IMPORTACION:n1                      {:RESULT = new LinkedList<Importacion>(); RESULT.add(n1);:}
+                    ;
+
+    IMPORTACION     ::= pr_importar:n1 pari EXP:n2 pard ptcoma  {:RESULT = new Importacion(n2, n1left, n2right);:}
+                    ;
+
+/***************************************************************************************************************************
+********************************************************  ELEMENTO *********************************************************
+****************************************************************************************************************************/
+
+    ELEMENTOS       ::= ELEMENTOS:n1 ELEMENTO:n2    {:RESULT = n1; if(n2 != null) { RESULT.add(n2); } :}
+                    |   ELEMENTO:n1                 {:RESULT = new LinkedList<Object>(); if(n1 != null) { RESULT.add(n1); }:}
+                    ;
+
+    ELEMENTO        ::= DECLARACION:n ptcoma        {: RESULT = n; :}
+                    |   IMPRIMIR:n ptcoma           {: RESULT = n; :}
+                    |   ASIGNACION:n ptcoma         {: RESULT = n; :}
+                    |   SI:n                        {: RESULT = n; :}
+                    |   SELECCIONA:n                {: RESULT = n; :}
+                    |   FUNCION:n                   {: RESULT = n; :}
+                    |   CALL_FUNCION:n ptcoma       {: RESULT = n; :}   /*FUNCIONES NORMALES*/
+                    |   CALL_NAT_WOT:n ptcoma       {: RESULT = n; :}   /*FUNCIONES DE ARREGLOS SIN RETORNOS*/
+                    |   CALL_NAT_INT:n ptcoma       {: RESULT = n; :}   /*FUNCIONES DE INTERFAZ*/
+                    |   CALL_NAT_ARR2:n ptcoma      {: RESULT = n; :}   /*FUNCIONES DE ARREGLOS*/
+                    |   error ptcoma
+                    |   error llad
+                    ;
+
+/***************************************************************************************************************************
+***************************************************  FUNCIONES INTERFAZ ****************************************************
+****************************************************************************************************************************/
+
+    CALL_NAT_INT    ::= id:n1 punto FUN_NAT_INT:n2                          {:RESULT = new Variable_Funcion(n1, n2, n1left, n1right);:}
+                    |   pr_leergxml:n1 pari EXP:n2 pard                     {:RESULT = new LeerGxml(n2, n1left, n1right);:}
+                    |   pr_crearventana:n1 pari LEXP:n2 pard                {:RESULT = new Variable_Funcion(new CrearVentana(n2, n1left, n1right), n1left, n1right);:}
+                    |   pr_creararraydesdearchivo:n1 pari EXP:n2 pard       {:RESULT = new Variable_Funcion(new CrearArrayDesdeArchivo(n2, n1left, n1right), n1left, n1right);:}
+                    ;
+
+    FUN_NAT_INT     ::= pr_obtenerporetiqueta:n1 pari EXP:n2 pard           {:RESULT = new ObtenerPorEtiqueta(n2, n1left, n1right);:}
+                    |   pr_obtenerporid:n1 pari EXP:n2 pard                 {:RESULT = new ObtenerPorId(n2, n1left, n1right);:}
+                    |   pr_obtenerpornombre:n1 pari EXP:n2 coma EXP:n3 pard {:RESULT = new ObtenerPorNombre(n2, n3, n1left, n1right);:}
+                    |   pr_crearcontenedor:n1 pari LEXP:n2 pard             {:RESULT = new CrearContenedor(n2, n1left, n1right);:}
+
+                    |   pr_creararraydesdearchivo:n pari pard               {:RESULT = new CrearArrayDesdeArchivo(nleft, nright);:}
+
+                    |   pr_alcerrar:n1 pari pard                            {:RESULT = new AlCerrar(n1left, n1right);:}
+                    |   pr_alcerrar:n1 pari CALL_FUNCION:n2 pard            {:RESULT = new AlCerrar(n2, n1left, n1right);:}
+                    |   pr_alcargar:n1 pari pard                            {:RESULT = new AlCargar(n1left, n1right);:}
+                    |   pr_alcargar:n1 pari CALL_FUNCION:n2 pard            {:RESULT = new AlCargar(n2, n1left, n1right);:}
+                    |   pr_alclic:n1 pari CALL_FUNCION:n2 pard              {:RESULT = new AlClick(n2, n1left, n1right);:}
+
+                    |   pr_creartexto:n1 pari LEXP:n2 pard                  {:RESULT = new CrearTexto(n2, n1left, n1right);:}
+                    |   pr_crearcajatexto:n1 pari LEXP:n2 pard              {:RESULT = new CrearCajaTexto(n2, n1left, n1right);:}
+                    |   pr_crearareatexto:n1 pari LEXP:n2 pard              {:RESULT = new CrearAreaTexto(n2, n1left, n1right);:}
+                    |   pr_crearcontrolnumerico:n1 pari LEXP:n2 pard        {:RESULT = new CrearControlNumerico(n2, n1left, n1right);:}
+                    |   pr_creardespegable:n1 pari LEXP:n2 pard             {:RESULT = new CrearDesplegable(n2, n1left, n1right);:}
+                    |   pr_crearboton:n1 pari LEXP:n2 pard                  {:RESULT = new CrearBoton(n2, n1left, n1right);:}
+
+                    |   pr_crearimagen pari LEXP pard
+                    |   pr_crearreproductor pari LEXP pard
+                    |   pr_crearvideo pari LEXP pard
+                    ;
+
+/***************************************************************************************************************************
+***************************************************  FUNCIONES ARREGLOS ****************************************************
+****************************************************************************************************************************/
+
+    CALL_NAT_WOT    ::= id:n1 punto id:n2 punto OPNAT:n3 pari pard  {:RESULT = new FunNatWot(n1, n2, n3, n2left, n2right);:}
+                    |   id:n1 punto OPNAT:n2 pari pard              {:RESULT = new FunNatWot(n1, n2, n1left, n1right);:}
+                    ;
+
+    OPNAT   ::= pr_descendente  {:RESULT = Operador.ASCENDENTE;:}
+            |   pr_ascendente   {:RESULT = Operador.DESCENDENTE;:}
+            |   pr_invertir     {:RESULT = Operador.INVERTIR;:}
+            ;
+
+    CALL_NAT_ARR2   ::= id:n1 CALL_NAT_ARR:n4                              {:RESULT = new Variable(n1, null, n4, n1left, n1right); :}
+                    |   id:n1 punto id:n2 CALL_NAT_ARR:n4                  {:RESULT = new Variable(n1, n2, null, n4, n1left, n1right); :}
+                    ;
+
+    CALL_NAT_ARR    ::= CALL_NAT_ARR:n1 punto NAT_ARR:n2    {:RESULT = n1; RESULT.add(n2);:}
+                    |   punto NAT_ARR:n1                    {:RESULT = new LinkedList<Expresion>(); RESULT.add(n1);:}
+                    ;
+
+    NAT_ARR     ::= pr_maximo:n1 pari pard              {:RESULT = new Maximo(n1left, n1right);:}
+                |   pr_minimo:n1 pari pard              {:RESULT = new Minimo(n1left, n1right);:}
+                |   pr_filtrar:n1 pari id:n2 pard       {:RESULT = new Filtrar(n2, n1left, n1right);:}
+                |   pr_buscar:n1 pari id:n2 pard        {:RESULT = new Buscar(n2, n1left, n1right);:}
+                |   pr_map:n1 pari id:n2 pard           {:RESULT = new Map(n2, n1left, n1right);:}
+                |   pr_reduce:n1 pari id:n2 pard        {:RESULT = new Reduce(n2, n1left, n1right);:}
+                |   pr_todos:n1 pari id:n2 pard         {:RESULT = new Todos(n2, n1left, n1right);:}
+                |   pr_alguno:n1 pari id:n2 pard        {:RESULT = new Alguno(n2, n1left, n1right);:}
+                ;
+
+/***************************************************************************************************************************
+********************************************************* FUNCION **********************************************************
+****************************************************************************************************************************/
+
+    CALL_FUNCION    ::= id:n1 pari LEXP:n2 pard     {:RESULT = new CallFuncion(n1, n2, n1left, n1right);:}
+                    |   id:n1 pari pard             {:RESULT = new CallFuncion(n1, n1left, n1right);:}
+                    ;
+
+    FUNCION     ::= pr_funcion:n1 id:n2 pari LPARAMS:n3 pard llai INSTRUCCIONES:n4 llad     {:RESULT = new Funcion(n2, n3, n4, n2left, n2right);:}
+                |   pr_funcion:n1 id:n2 pari LPARAMS:n3 pard llai llad                      {:RESULT = new Funcion(n2, n3, n2left, n2right, true);:}
+                |   pr_funcion:n1 id:n2 pari pard llai INSTRUCCIONES:n4 llad                {:RESULT = new Funcion(n2, n4, n2left, n2right);:}
+                |   pr_funcion:n1 id:n2 pari pard llai llad                                 {:RESULT = new Funcion(n2, n2left, n2right);:}
+                ;
+
+    LPARAMS     ::= LPARAMS:n1 coma PARAM:n2    {: RESULT = n1; RESULT.add(n2); :}
+                |   PARAM:n1                    {: RESULT = new LinkedList<Declaracion>(); RESULT.add(n1); :}
+                ;
+
+    PARAM       ::= pr_var:n1 id:n2         {: RESULT = new Declaracion(n2, n2left, n2right); :}
+                ;
+
+/***************************************************************************************************************************
+****************************************************** INSTRUCCIONES *******************************************************
+****************************************************************************************************************************/
+
+    INSTRUCCIONES   ::= INSTRUCCIONES:n1 INSTRUCCION:n2 {: RESULT = n1; if (n2 != null) { RESULT.add(n2); } :}
+                    |   INSTRUCCION:n2                  {: RESULT = new LinkedList<Instruccion>(); if(n2 != null) { RESULT.add(n2); }:}
+                    ;
+
+    INSTRUCCION     ::= DECLARACION:n ptcoma        {: RESULT = n; :}
+                    |   IMPRIMIR:n ptcoma           {: RESULT = n; :}
+                    |   ASIGNACION:n ptcoma         {: RESULT = n; :}
+                    |   RETORNAR:n ptcoma           {: RESULT = n; :}
+                    |   DETENER:n ptcoma            {: RESULT = n; :}
+                    |   SI:n                        {: RESULT = n; :}
+                    |   SELECCIONA:n                {: RESULT = n; :}
+                    |   CALL_FUNCION:n ptcoma       {: RESULT = (Instruccion) n; :}     /*FUNCIONES NORMALES*/
+                    |   CALL_NAT_WOT:n ptcoma       {: RESULT = n; :}                   /*FUNCIONES SI RETORNO DE ARREGLO*/
+                    |   CALL_NAT_INT:n ptcoma       {: RESULT = (Instruccion) n; :}     /*FUNCIONES DE INTERFAZ*/
+                    |   CALL_NAT_ARR2:n ptcoma      {: RESULT = (Instruccion) n; :}     /*FUNCIONES DE ARREGLOS*/
+                    |   error ptcoma
+                    |   error llad
+                    ;
+
+/***************************************************************************************************************************
+******************************************************** SELECCION *********************************************************
+****************************************************************************************************************************/
+
+    SELECCIONA  ::= pr_selecciona:n1 pari EXP:n2 pard llai LCASOS:n3 llad               {:RESULT = new Selecciona(n2, n3, n1left, n1right);:}
+                |   pr_selecciona:n1 pari EXP:n2 pard llai LCASOS:n3 DEFECTO:n4 llad    {:RESULT = new Selecciona(n2, n3, n4, n1left, n1right);:}
+                ;
+
+    LCASOS      ::= LCASOS:n1 CASO:n2       {:RESULT = n1; RESULT.add(n2);:}
+                |   CASO:n1                 {:RESULT = new LinkedList<Caso>(); RESULT.add(n1);:}
+                ;
+  
+    CASO        ::= pr_caso:n1 EXP:n2 dospuntos llai INSTRUCCIONES:n3 llad      {:RESULT = new Caso(n2, n3, n1left, n1right);:}
+                |   pr_caso:n1 EXP:n2 dospuntos llai llad                       {:RESULT = new Caso(n2, n1left, n1right);:}
+                ;
+
+    DEFECTO     ::= pr_defecto:n1 dospuntos llai INSTRUCCIONES:n2 llad  {:RESULT = new Caso(n2, n1left, n1right);:}
+                |   pr_defecto:n1 dospuntos llai llad                   {:RESULT = new Caso(n1left, n1right);:}
+                ;
+
+    SI          ::= SSI:n1 LSINOSI:n2 SINO:n3   {:RESULT = new Si(n1, n2, n3);:}
+                |   SSI:n1 LSINOSI:n2           {:RESULT = new Si(n1, n2);:}
+                |   SSI:n1 SINO:n3              {:RESULT = new Si(n1, n3);:}
+                |   SSI:n1                      {:RESULT = new Si(n1);:}
+                ;
+
+    SSI         ::= pr_si:n1 pari EXP:n2 pard llai INSTRUCCIONES:n3 llad    {:RESULT = new SSi(n2, n3, n1left, n1right);:}
+                |   pr_si:n1 pari EXP:n2 pard llai llad                     {:RESULT = new SSi(n2, n1left, n1right);:}
+                ;
+
+    LSINOSI     ::= LSINOSI:n1 SINOSI:n2                    {:RESULT = n1; RESULT.add(n2);:}
+                |   SINOSI:n1                               {:RESULT = new LinkedList<SSi>(); RESULT.add(n1);:}
+                ;
+
+    SINOSI      ::= pr_sino pr_si:n1 pari EXP:n2 pard llai INSTRUCCIONES:n3 llad    {:RESULT = new SSi(n2, n3, n1left, n1right);:}
+                |   pr_sino pr_si:n1 pari EXP:n2 pard llai llad                     {:RESULT = new SSi(n2, n1left, n1right);:}
+                ;
+
+    SINO        ::= pr_sino:n1 llai INSTRUCCIONES:n2 llad   {:RESULT = new Sino(n2, n1left, n1right);:}
+                |   pr_sino:n1 llai llad                    {:RESULT = new Sino(n1left, n1right);:}
+                ;
+
+    TERNARIO    ::= EXP:n1 inter:n2 EXP:n3 dospuntos EXP:n4 {:RESULT = new Ternario(n1, n3, n4, n2left, n2right);:}
+                ;
+
+/***************************************************************************************************************************
+****************************************************** TRANSFERENCIA *******************************************************
+****************************************************************************************************************************/
+
+    DETENER     ::= pr_detener:n                {:RESULT = new Detener(nleft, nright);:}
+                ;
+
+    RETORNAR    ::= pr_retornar:n1 EXP:n2       {:RESULT = new Retornar(n2, n1left, n1right);:}
+                |   pr_retornar:n               {:RESULT = new Retornar(null, nleft, nright);:}
+                ;
+
+/***************************************************************************************************************************
+********************************************************* IMPRIMIR *********************************************************
+****************************************************************************************************************************/
+
+    IMPRIMIR    ::= pr_imprimir:p pari EXP:n pard   {: RESULT = new Imprimir(n, pleft, pright); :}
+                ;
+
+/***************************************************************************************************************************
+******************************************************* ASIGNACIONES *******************************************************
+****************************************************************************************************************************/
+
+    ASIGNACION  ::= id:n1 OPASIG:n2 EXP:n3                                  {:RESULT = new Asignacion(n1, n2, n3, n2left, n2right);:}
+                |   id:n1 OPASIG:n2 ARREGLO:n3                              {:RESULT = new Asignacion(n1, n2, n3, n2left, n2right);:}
+                |   id:n1 OPASIG:n2 OBJETO:n3                               {:RESULT = new Asignacion(n1, n2, n3, n2left, n2right);:}
+                |   id:n1 punto id:n2 OPASIG:n3 EXP:n4                      {:RESULT = new Asignacion(n1, n2, n3, n4, n3left, n3right);:}
+                |   id:n1 punto id:n2 OPASIG:n3 ARREGLO:n4                  {:RESULT = new Asignacion(n1, n2, n3, n4, n3left, n3right);:}
+                |   id:n1 punto id:n2 cori EXP:n3 cord OPASIG:n4 EXP:n5     {:RESULT = new Asignacion(n1, n2, n3, n4, n5, n4left, n4right);:}
+                |   id:n1 cori EXP:n2 cord OPASIG:n3 EXP:n4                 {:RESULT = new Asignacion(n1, n2, n3, n4, n3left, n3right);:}
+                ;
+
+    OPASIG  ::= igual       {:RESULT = Operador.IGUAL;:}
+            |   masigual    {:RESULT = Operador.MASIGUAL;:}
+            |   porigual    {:RESULT = Operador.PORIGUAL;:}
+            |   menigual    {:RESULT = Operador.MENIGUAL;:}
+            |   divigual    {:RESULT = Operador.DIVIGUAL;:}
+            ;
+
+/***************************************************************************************************************************
+****************************************************** DECLARACIONES *******************************************************
+****************************************************************************************************************************/
+
+    DECLARACION     ::= pr_var:n1 LID:n2 igual:n3 EXP:n4        {: RESULT = new Declaracion(n2, n4, n1left, n1right); :}
+                    |   pr_var:n1 LID:n2 igual:n3 ARREGLO:n4    {: RESULT = new Declaracion(n2, n4, n1left, n1right); :}
+                    |   pr_var:n1 LID:n2 igual:n3 OBJETO:n4     {: RESULT = new Declaracion(n2, n4, n1left, n1right); :}
+                    |   pr_var:n1 LID:n2                        {: RESULT = new Declaracion(n2, n1left, n1right); :}
+                    ;
+
+    ARREGLO     ::= cori LEXP:n1 cord  {: RESULT = new Arreglo(n1); :}
+                |   cori cord          {: RESULT = new Arreglo(); :}
+                ;
+
+    LEXP    ::= LEXP:n1 coma EXP:n2 {: RESULT = n1; RESULT.add(n2); :}
+            |   EXP:n1              {: RESULT = new LinkedList<Expresion>(); RESULT.add(n1); :}
+            ;
+
+    OBJETO  ::= llai LPARES:n1 llad {: RESULT = new Objeto(n1); :}
+            ;
+
+    LPARES  ::= LPARES:n1 coma PAR:n2   {: RESULT = n1; RESULT.add(n2); :}
+            |   PAR:n1                  {: RESULT = new LinkedList<Par>(); RESULT.add(n1); :}
+            ;
+
+    PAR     ::= id:n1 dospuntos:n2 VALOR:n3 {: RESULT = new Par(n1, n3, n2left, n2right); :}
+            ;
+
+    VALOR   ::= EXP:n1             {: RESULT = n1; :}
+            |   cori LEXP:n1 cord  {: RESULT = new Arreglo(n1); :}
+            ;
+
+    LID     ::= LID:n1 coma id:n2  {: RESULT = n1; RESULT.add(new Id(n2, n2left, n2right)); :}
+            |   id:n1              {: RESULT = new LinkedList<Id>(); RESULT.add(new Id(n1, n1left, n1right)); :}
+            ;
+
+/***************************************************************************************************************************
+******************************************************** EXPRESIONES *******************************************************
+****************************************************************************************************************************/
+
+    EXP ::= EXP:n1 mas:op EXP:n2        {:RESULT = new Aritmetica(n1, n2, Operador.MAS, opleft, opright); :}
+        |   EXP:n1 menos:op EXP:n2      {:RESULT = new Aritmetica(n1, n2, Operador.MENOS, opleft, opright); :}
+        |   EXP:n1 por:op EXP:n2        {:RESULT = new Aritmetica(n1, n2, Operador.POR, opleft, opright); :}
+        |   EXP:n1 div:op EXP:n2        {:RESULT = new Aritmetica(n1, n2, Operador.DIV, opleft, opright); :}
+        |   EXP:n1 pot:op EXP:n2        {:RESULT = new Aritmetica(n1, n2, Operador.POT, opleft, opright); :}
+        |   EXP:n masmas:op             {:RESULT = new Aritmetica(n, Operador.MASMAS, opleft, opright); :}
+        |   EXP:n menmen:op             {:RESULT = new Aritmetica(n, Operador.MENMEN, opleft, opright); :}
+        |   menos:op EXP:n              {:RESULT = new Aritmetica(n, Operador.MENOS, opleft, opright); :} %prec UMENOS
+
+        |   pari EXP:n pard             {:RESULT = n; :}
+        |   LOGICO:n                    {:RESULT = n; :}
+        |   TERNARIO:n                  {:RESULT = n; :}
+
+        |   CALL_FUNCION:n              {:RESULT = n; :}
+        |   CALL_NAT_INT:n              {:RESULT = n; :}
+        |   CALL_NAT_ARR2:n             {:RESULT = n; :}
+
+        |   entero:n                    {:RESULT = new Literal(Tipo.ENTERO, n, nleft, nright); :}
+        |   decimal:n                   {:RESULT = new Literal(Tipo.DECIMAL, n, nleft, nright); :}
+        |   cadena:n                    {:RESULT = new Literal(Tipo.CADENA, n, nleft, nright); :}
+        |   pr_nulo:n                   {:RESULT = new Literal(Tipo.UNDEFINED, n.toLowerCase(), nleft, nright); :}
+
+        |   id:n1                               {:RESULT = new Variable(n1, null, n1left, n1right); :}
+        |   id:n1 punto id:n2                   {:RESULT = new Variable(n1, n2, null, n1left, n1right); :}
+        |   id:n1 punto id:n2 cori EXP:n3 cord  {:RESULT = new Variable(n1, n2, n3, n1left, n1right); :}
+        |   id:n1 cori EXP:n2 cord              {:RESULT = new Variable(n1, n2, n1left, n1right); :}
+        ;
+
+    LOGICO     ::=  EXP:n1 and:op EXP:n2        {:RESULT = new Logica(n1, n2, Operador.AND, opleft, opright); :}
+                |   EXP:n1 or:op EXP:n2         {:RESULT = new Logica(n1, n2, Operador.OR, opleft, opright); :}
+                |   not:op EXP:n                {:RESULT = new Logica(n, Operador.NOT, opleft, opright); :}
+                |   RELACIONAL:n                {:RESULT = n; :}
+                |   pr_verdadero:n              {:RESULT = new Literal(Tipo.BOOLEANO, n, nleft, nright); :}
+                |   pr_falso:n                  {:RESULT = new Literal(Tipo.BOOLEANO, n, nleft, nright); :}
+                ;
+
+    RELACIONAL ::=  EXP:n1 igualigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.IGUALIGUAL, opleft, opright); :}
+                |   EXP:n1 diferente:op EXP:n2  {:RESULT = new Relacional(n1, n2, Operador.DIFERENTE, opleft, opright); :}
+                |   EXP:n1 mayor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MAYOR, opleft, opright); :}
+                |   EXP:n1 menor:op EXP:n2      {:RESULT = new Relacional(n1, n2, Operador.MENOR, opleft, opright); :}
+                |   EXP:n1 mayorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MAYORIGUAL, opleft, opright); :}
+                |   EXP:n1 menorigual:op EXP:n2 {:RESULT = new Relacional(n1, n2, Operador.MENORIGUAL, opleft, opright); :}
+                ;

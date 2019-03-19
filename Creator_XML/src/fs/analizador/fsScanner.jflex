@@ -1,6 +1,7 @@
 package fs.analizador;
 
 import java_cup.runtime.Symbol;
+import otros.Constante;
 
 %%
 %class fsScanner
@@ -16,6 +17,7 @@ import java_cup.runtime.Symbol;
 
 %init{
     yyline = 1;
+    yychar = 1;
 %init}
 
 %{
@@ -50,6 +52,9 @@ MULCOMMENT      =   "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
 
 <YYINITIAL>
 {
+    {UNICOMMENT}        {}
+    {MULCOMMENT}        {}
+
     /*estados*/
     "\""                { yybegin(CADENA); cadena=""; }
     "\'"                { yybegin(CARACTER); cadena=""; }
@@ -99,6 +104,7 @@ MULCOMMENT      =   "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
 
     /*palabras reservadas*/
     "var"               { return symbol(sym.pr_var); }
+    "importar"          { return symbol(sym.pr_importar); }
     "imprimir"          { return symbol(sym.pr_imprimir); }
     "detener"           { return symbol(sym.pr_detener); }
     "retornar"          { return symbol(sym.pr_retornar); }
@@ -140,17 +146,22 @@ MULCOMMENT      =   "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
     "alcerrar"          { return symbol(sym.pr_alcerrar); }
     "verdadero"         { return symbol(sym.pr_verdadero); }
     "falso"             { return symbol(sym.pr_falso); }
+    "nulo"              { return symbol(sym.pr_nulo); }
+
+    \n                  { yychar=1; }
 
     {ENTERO}            { return symbol(sym.entero); }
     {DECIMAL}           { return symbol(sym.decimal); }
     {ID}                { return symbol(sym.id); }
-
-    {UNICOMMENT}        {}
-    {MULCOMMENT}        {}
     
     {ESPACIOS}          {}
 
-    .                   {System.err.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yychar);}
+    .                   {
+                            otros.Error err = new otros.Error(Constante.FS, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
 }
 
 <CADENA>
@@ -165,11 +176,18 @@ MULCOMMENT      =   "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
     \\r            { cadena+=String.valueOf("\r"); }
     \              { }
     \\             { cadena+=String.valueOf("\\"); }
+
+    .                   {
+                            otros.Error err = new otros.Error(Constante.FS, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
 }
 
 <CARACTER>
 {
-    \'             { yybegin(YYINITIAL); System.out.println(cadena); return symbol(sym.caracter, cadena); }
+    \'             { yybegin(YYINITIAL); return symbol(sym.cadena, cadena); }
     [^\n\r\\\'\"]+ { cadena+=String.valueOf(yytext()); }
     \"             { cadena+=String.valueOf("\""); }
     \\\"           { cadena+=String.valueOf("\""); }
@@ -179,5 +197,13 @@ MULCOMMENT      =   "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
     \\r            { cadena+=String.valueOf("\r"); }
     \              { }
     \\             { cadena+=String.valueOf("\\"); }
+
+
+    .                   {
+                            otros.Error err = new otros.Error(Constante.FS, Constante.LEXICO, yytext(), Constante.ent_temporal.ambito, 
+                            "El caracter: "+yytext()+" no pertenece al lenguaje", 
+                            Constante.archivo, yyline, yychar);
+                            otros.Error.agregarError(err);
+                        }
 }
 

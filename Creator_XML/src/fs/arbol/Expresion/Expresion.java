@@ -5,15 +5,13 @@
  */
 package fs.arbol.Expresion;
 
-import entorno.*;
+import entorno.Entorno;
 
 /**
  *
  * @author Jhona
  */
 public interface Expresion {
-    
-    public int getTipo(Literal izq, Literal der);
     
     public Object evaluar(Entorno ent);
     

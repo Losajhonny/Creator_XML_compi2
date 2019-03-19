@@ -1,10 +1,18 @@
 package gxml.analizador;
 
+import entorno.Entorno;
 import java_cup.runtime.*;
 import gxml.arbol.*;
+import gxml.arbol.componente.*;
+import gxml.arbol.especial.*;
+import gxml.arbol.contenedor.*;
+import fs.arbol.Expresion.Operaciones.Operacion.Tipo;
 import otros.Constante;
+import java.util.LinkedList;
 
 parser code {:
+    public static AstGxml Syntax_tree = null;
+
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
@@ -19,8 +27,12 @@ parser code {:
         	}
         	m.append(". No se esperaba este componente: " + s.value + ".");
         }
-        System.out.println(m);
-        Constante.consola += String.valueOf(m) + "\n";
+
+        Object valor = (s.value != null)? s.value: "Fin de archivo";
+            otros.Error err = new otros.Error(Constante.GXML, Constante.SINTACTICO, "", Constante.ent_temporal.ambito, " No se esperaba este componente: " + valor, Constante.archivo, s.left, s.right);
+            otros.Error.agregarError(err);
+
+        //Constante.consola += String.valueOf(m) + "\n";
     }
 
     /**
@@ -38,7 +50,7 @@ parser code {:
 
     /*simbolos*/
     terminal String open,
-    close,
+    //close,
     slash,
     igual;
 
@@ -82,7 +94,9 @@ parser code {:
     decimal, pr_verdadero, pr_falso;
 
     terminal String cadena,
-    //todo,
+    todo,
+    nada,
+    fin,
     llamada;
 
 
@@ -91,23 +105,43 @@ parser code {:
 //--------------------------------------------------------------------------------
 
 non terminal Object S;
-non terminal Object IMPORTACIONES, IMPORTAR;
-non terminal Object VENTANAS, VENTANA, ELEMENTOS_VENTANA, ELEMENTO_VENTANA;
-non terminal Object CONTENEDORES, CONTENEDOR, ELEMENTOS_CONTENEDOR, ELEMENTO_CONTENEDOR;
 
-non terminal Object INSTRUCCIONES, INSTRUCCION;
+non terminal AstGxml INIT;
 
-non terminal Object TEXTO, ELEMENTOS_TEXTO, ELEMENTO_TEXTO;
-non terminal Object CONTROLADOR, ELEMENTOS_CONTROLADOR, ELEMENTO_CONTROLADOR;
+non terminal LinkedList<Importar> IMPORTACIONES;
+non terminal Importar IMPORTAR;
 
-non terminal Object ESPECIALES, ESPECIAL;
-non terminal Object LISTA_DATO, DATOS, DATO;
-non terminal Object DEFECTO;
+non terminal LinkedList<Ventana> IMPORTS;
+non terminal LinkedList<Ventana> VENTANAS;
+non terminal Ventana VENTANA;
 
-non terminal Object MULTIMEDIA, ELEMENTOS_MULTIMEDIA, ELEMENTO_MULTIMEDIA;
-non terminal Object BOTON, ELEMENTOS_BOTON, ELEMENTO_BOTON;
-non terminal Object ENVIAR, ELEMENTOS_ENVIAR, ELEMENTO_ENVIAR;
+non terminal LinkedList<Contenedor> CONTENEDORES;
+non terminal Contenedor CONTENEDOR;
 
+non terminal LinkedList<Ejecutar> INSTRUCCIONES;
+non terminal Ejecutar INSTRUCCION;
+
+non terminal Texto TEXTO;
+non terminal Controlador CONTROLADOR;
+
+non terminal LinkedList<Especial> ESPECIALES;
+non terminal Especial ESPECIAL;
+
+non terminal ListaDato LISTA_DATO;
+non terminal LinkedList<String> DATOS;
+non terminal String DATO;
+
+non terminal Defecto DEFECTO;
+
+non terminal Multimedia MULTIMEDIA;
+non terminal Boton BOTON;
+non terminal Enviar ENVIAR;
+
+non terminal LinkedList<Elemento> ELEMENTOS_ENVIAR, ELEMENTOS_CONTENEDOR, ELEMENTOS_VENTANA, 
+ELEMENTOS_CONTROLADOR, ELEMENTOS_BOTON, ELEMENTOS_MULTIMEDIA, ELEMENTOS_TEXTO;
+
+non terminal Elemento ELEMENTO_ENVIAR, ELEMENTO_CONTENEDOR, ELEMENTO_CONTROLADOR, 
+ELEMENTO_BOTON, ELEMENTO_MULTIMEDIA, ELEMENTO_TEXTO, ELEMENTO_VENTANA;
 non terminal Elemento ID, TIPO, COLOR, ACCIONINI, ACCIONFIN;
 non terminal Elemento X, Y, ALTO, ANCHO, BORDE;
 non terminal Elemento NOMBRE, FUENTE, TAM, NEGRITA, CURSIVA;
@@ -118,273 +152,282 @@ non terminal Elemento PATH, AUTO_REPRODUCCION;
 //---------------------------------- GRAMATICA -----------------------------------
 //--------------------------------------------------------------------------------
 
+
 start with S;
 
 /***************************  INICIO  ***************************/
 
-    S   ::= IMPORTACIONES VENTANAS
-        |   VENTANAS
-        |
+    S   ::= INIT:n    {:Syntax_tree=n;:}
+        |             {:Syntax_tree=null;:}
         ;
+
+    INIT    ::= IMPORTACIONES:n1 IMPORTS:n              {:RESULT = new AstGxml(n1, n);:}
+            |   open VENTANAS:n1 fin                    {:RESULT = new AstGxml(n1);:}
+            ;
+
+    IMPORTS     ::= nada VENTANAS:n2 fin   {:RESULT = n2;:}
+                |   fin                    {:RESULT = null;:}
+                ;
 
 /*************************** IMPORTAR  ***************************/
 
-    IMPORTACIONES   ::= IMPORTACIONES IMPORTAR
-                    |   IMPORTAR
+    IMPORTACIONES   ::= IMPORTACIONES:l nada IMPORTAR:n {:RESULT = l; RESULT.add(n);:}
+                    |   open IMPORTAR:n                 {:RESULT = new LinkedList<Importar>(); RESULT.add(n);:}
                     ;
 
-    IMPORTAR    ::= open pr_importar close /*direccion*/ open slash pr_importar close
-                ;
+    IMPORTAR    ::= pr_importar:p todo:n slash pr_importar    {:RESULT = new Importar(n, pleft, pright);:};
 
 /***************************  VENTANA  ***************************/
 
-    VENTANAS    ::= VENTANAS VENTANA
-                |   VENTANA
+    VENTANAS    ::= VENTANAS:l nada VENTANA:n   {:RESULT = l; if(n != null) { RESULT.add(n); }:}
+                |   VENTANA:n                   {:RESULT = new LinkedList<Ventana>(); if(n != null) { RESULT.add(n); }:}
+                ;
+    
+    VENTANA     ::= pr_ventana:p ELEMENTOS_VENTANA:n1 nada CONTENEDORES:n2 nada slash pr_ventana      {:RESULT = new Ventana(n1, n2, pleft, pright);:}
+                |   pr_ventana:p ELEMENTOS_VENTANA:n1 nada slash pr_ventana                           {:RESULT = new Ventana(n1, pleft, pright);:}
+                |   error slash pr_ventana
                 ;
 
-    VENTANA     ::= open pr_ventana ELEMENTOS_VENTANA close CONTENEDORES open slash pr_ventana close
-                |   open pr_ventana ELEMENTOS_VENTANA close open slash pr_ventana close
-                ;
-
-    ELEMENTOS_VENTANA   ::= ELEMENTOS_VENTANA ELEMENTO_VENTANA
-                        |   ELEMENTO_VENTANA
+    ELEMENTOS_VENTANA   ::= ELEMENTOS_VENTANA:l ELEMENTO_VENTANA:n  {:RESULT = l; RESULT.add(n); :}
+                        |   ELEMENTO_VENTANA:n                      {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                         ;
 
-    ELEMENTO_VENTANA    ::= ID
-                        |   TIPO
-                        |   COLOR
-                        |   ACCIONINI
-                        |   ACCIONFIN
+    ELEMENTO_VENTANA    ::= ID:n            {:RESULT = n;:}
+                        |   TIPO:n          {:RESULT = n;:}
+                        |   COLOR:n         {:RESULT = n;:}
+                        |   ACCIONINI:n     {:RESULT = n;:}
+                        |   ACCIONFIN:n     {:RESULT = n;:}
                         ;
 
 /************************** CONTENEDOR ***************************/
 
-    CONTENEDORES    ::= CONTENEDORES CONTENEDOR
-                    |   CONTENEDOR
+    CONTENEDORES    ::= CONTENEDORES:l nada CONTENEDOR:n    {:RESULT = l; if(n != null) { RESULT.add(n); }:}
+                    |   CONTENEDOR:n                        {:RESULT = new LinkedList<Contenedor>(); if(n != null) { RESULT.add(n); }:}
                     ;
     
-    CONTENEDOR  ::= open pr_contenedor ELEMENTOS_CONTENEDOR close INSTRUCCIONES open slash pr_contenedor close
-                |   open pr_contenedor ELEMENTOS_CONTENEDOR close open slash pr_contenedor close
+    CONTENEDOR  ::= pr_contenedor:p ELEMENTOS_CONTENEDOR:n1 nada slash pr_contenedor                          {:RESULT = new Contenedor(n1, pleft, pright);:}
+                |   pr_contenedor:p ELEMENTOS_CONTENEDOR:n1 nada INSTRUCCIONES:n2 nada slash pr_contenedor    {:RESULT = new Contenedor(n1, n2, pleft, pright);:}
+                |   error slash pr_contenedor
                 ;
 
-    ELEMENTOS_CONTENEDOR    ::= ELEMENTOS_CONTENEDOR ELEMENTO_CONTENEDOR
-                            |   ELEMENTO_CONTENEDOR
+    ELEMENTOS_CONTENEDOR    ::= ELEMENTOS_CONTENEDOR:l ELEMENTO_CONTENEDOR:n {:RESULT = l; RESULT.add(n); :}
+                            |   ELEMENTO_CONTENEDOR:n                       {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                             ;
 
-    ELEMENTO_CONTENEDOR     ::= ID
-                            |   X
-                            |   Y
-                            |   ALTO
-                            |   ANCHO
-                            |   COLOR
-                            |   BORDE
+    ELEMENTO_CONTENEDOR     ::= ID:n        {:RESULT = n;:}
+                            |   X:n         {:RESULT = n;:}
+                            |   Y:n         {:RESULT = n;:}
+                            |   ALTO:n      {:RESULT = n;:}
+                            |   ANCHO:n     {:RESULT = n;:}
+                            |   COLOR:n     {:RESULT = n;:}  
+                            |   BORDE:n     {:RESULT = n;:}  
                             ;
 
-    INSTRUCCIONES   ::= INSTRUCCIONES INSTRUCCION
-                    |   INSTRUCCION
+    INSTRUCCIONES   ::= INSTRUCCIONES:l nada INSTRUCCION:n  {:RESULT = l; RESULT.add(n);:}
+                    |   INSTRUCCION:n                       {:RESULT = new LinkedList<Ejecutar>(); RESULT.add(n);:}
                     ;
 
-    INSTRUCCION     ::= TEXTO
-                    |   CONTROLADOR
-                    |   MULTIMEDIA
-                    |   BOTON
-                    |   ENVIAR
+    INSTRUCCION     ::= TEXTO:n         {:RESULT = n;:}
+                    |   MULTIMEDIA:n    {:RESULT = n;:}
+                    |   BOTON:n         {:RESULT = n;:}
+                    |   ENVIAR:n        {:RESULT = n;:}
+                    |   CONTROLADOR:n   {:RESULT = n;:}
                     ;
 
 /****************************   TEXTO  ***************************/
 
-    TEXTO   ::= open pr_texto ELEMENTOS_TEXTO close /*todo*/ open slash pr_texto close
+    TEXTO   ::= pr_texto:p ELEMENTOS_TEXTO:n1 todo:n2 slash pr_texto  {:RESULT = new Texto(n1, n2, pleft, pright);:}
+            |   pr_texto:p ELEMENTOS_TEXTO:n1 nada slash pr_texto     {:RESULT = new Texto(n1, pleft, pright);:}
             ;
 
-    ELEMENTOS_TEXTO     ::= ELEMENTOS_TEXTO ELEMENTO_TEXTO
-                        |   ELEMENTO_TEXTO
+    ELEMENTOS_TEXTO     ::= ELEMENTOS_TEXTO:l ELEMENTO_TEXTO:n  {:RESULT = l; RESULT.add(n); :}
+                        |   ELEMENTO_TEXTO:n                    {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                         ;
 
-    ELEMENTO_TEXTO  ::= NOMBRE
-                    |   X
-                    |   Y
-                    |   FUENTE
-                    |   TAM
-                    |   COLOR
-                    |   NEGRITA
-                    |   CURSIVA
+    ELEMENTO_TEXTO  ::= NOMBRE:n    {:RESULT = n;:}
+                    |   X:n         {:RESULT = n;:}
+                    |   Y:n         {:RESULT = n;:}
+                    |   FUENTE:n    {:RESULT = n;:}
+                    |   TAM:n       {:RESULT = n;:}
+                    |   COLOR:n     {:RESULT = n;:}
+                    |   NEGRITA:n   {:RESULT = n;:}
+                    |   CURSIVA:n   {:RESULT = n;:}
                     ;
 
 /************************** CONTROLADOR **************************/
 
-    CONTROLADOR     ::= open pr_control ELEMENTOS_CONTROLADOR close ESPECIALES open slash pr_control close
-                    |   open pr_control ELEMENTOS_CONTROLADOR close open slash pr_control close
+    CONTROLADOR     ::= pr_control:p ELEMENTOS_CONTROLADOR:n1 nada ESPECIALES:n2 nada slash pr_control    {:RESULT = new Controlador(n1, n2, pleft, pright);:}
+                    |   pr_control:p ELEMENTOS_CONTROLADOR:n1 nada slash pr_control                       {:RESULT = new Controlador(n1, pleft, pright);:}
                     ;
 
-    ELEMENTOS_CONTROLADOR   ::= ELEMENTOS_CONTROLADOR ELEMENTO_CONTROLADOR
-                            |   ELEMENTO_CONTROLADOR
+    ELEMENTOS_CONTROLADOR   ::= ELEMENTOS_CONTROLADOR:l ELEMENTO_CONTROLADOR:n  {:RESULT = l; RESULT.add(n); :}
+                            |   ELEMENTO_CONTROLADOR:n                          {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                             ;
 
-    ELEMENTO_CONTROLADOR    ::= TIPO
-                            |   NOMBRE
-                            |   X
-                            |   Y
-                            |   ALTO
-                            |   ANCHO
-                            |   FUENTE
-                            |   TAM
-                            |   COLOR
-                            |   NEGRITA
-                            |   CURSIVA
-                            |   MAXIMO
-                            |   MINIMO
-                            |   ACCION
+    ELEMENTO_CONTROLADOR    ::= TIPO:n      {:RESULT = n;:}
+                            |   NOMBRE:n    {:RESULT = n;:}
+                            |   X:n         {:RESULT = n;:}
+                            |   Y:n         {:RESULT = n;:}
+                            |   ALTO:n      {:RESULT = n;:}
+                            |   ANCHO:n     {:RESULT = n;:}
+                            |   FUENTE:n    {:RESULT = n;:}
+                            |   TAM:n       {:RESULT = n;:}
+                            |   COLOR:n     {:RESULT = n;:}
+                            |   NEGRITA:n   {:RESULT = n;:}
+                            |   CURSIVA:n   {:RESULT = n;:}
+                            |   MAXIMO:n    {:RESULT = n;:}
+                            |   MINIMO:n    {:RESULT = n;:}
+                            |   ACCION:n    {:RESULT = n;:}
                             ;
 
-    ESPECIALES  ::= ESPECIALES ESPECIAL
-                |   ESPECIAL
+    ESPECIALES  ::= ESPECIALES:l nada ESPECIAL:n    {:RESULT = l; RESULT.add(n);:}
+                |   ESPECIAL:n                      {:RESULT = new LinkedList<Especial>(); RESULT.add(n);:}
                 ;
 
-    ESPECIAL    ::= LISTA_DATO
-                |   DEFECTO
+    ESPECIAL    ::= LISTA_DATO:n    {:RESULT = n;:}
+                |   DEFECTO:n       {:RESULT = n;:}
                 ;
 
 /************************** LISTA_DATO ***************************/
 
-    LISTA_DATO  ::= open pr_listadato ACCION close DATOS open slash pr_listadato close
-                |   open pr_listadato close DATOS open slash pr_listadato close
+    LISTA_DATO  ::= pr_listadato:p nada DATOS:n nada slash pr_listadato     {:RESULT = new ListaDato(n, pleft, pright);:}
                 ;
 
-    DATOS   ::= DATOS DATO
-            |   DATO
+    DATOS   ::= DATOS:l nada DATO:n     {:RESULT = l; RESULT.add(n);:}
+            |   DATO:n                  {:RESULT = new LinkedList<String>(); RESULT.add(n);:}
             ;
 
 /***************************    DATO   ***************************/
 
-    DATO    ::= open pr_dato close entero open slash pr_dato close
-            |   open pr_dato close decimal open slash pr_dato close
-            |   open pr_dato close /*todo*/ open slash pr_dato close;
+    DATO    ::= pr_dato todo:n slash pr_dato    {:RESULT = n;:}
+            ;
 
 /***************************  DEFECTO  ***************************/
+
+    DEFECTO     ::= pr_defecto todo:n slash pr_defecto    {:RESULT = new Defecto(n);:}
+                ;
     
-    DEFECTO     ::= open pr_defecto close entero open slash pr_defecto close
-                |   open pr_defecto close decimal open slash pr_defecto close
-                |   open pr_defecto close /*todo*/ open slash pr_defecto close
-                ;
-
 /************************** MULTIMEDIA ***************************/
-    MULTIMEDIA  ::= open pr_multimedia ELEMENTOS_MULTIMEDIA close open slash pr_multimedia close
+
+    MULTIMEDIA  ::= pr_multimedia:p ELEMENTOS_MULTIMEDIA:n nada slash pr_multimedia {:RESULT = new Multimedia(n, pleft, pright);:}
                 ;
 
-    ELEMENTOS_MULTIMEDIA    ::= ELEMENTOS_MULTIMEDIA ELEMENTO_MULTIMEDIA
-                            |   ELEMENTO_MULTIMEDIA
+    ELEMENTOS_MULTIMEDIA    ::= ELEMENTOS_MULTIMEDIA:l ELEMENTO_MULTIMEDIA:n    {:RESULT = l; RESULT.add(n); :}
+                            |   ELEMENTO_MULTIMEDIA:n                           {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                             ;
 
-    ELEMENTO_MULTIMEDIA     ::= PATH
-                            |   TIPO
-                            |   NOMBRE
-                            |   X
-                            |   Y
-                            |   ALTO
-                            |   ANCHO
-                            |   AUTO_REPRODUCCION
+    ELEMENTO_MULTIMEDIA     ::= PATH:n                  {:RESULT = n;:}
+                            |   TIPO:n                  {:RESULT = n;:}
+                            |   NOMBRE:n                {:RESULT = n;:}
+                            |   X:n                     {:RESULT = n;:}
+                            |   Y:n                     {:RESULT = n;:}
+                            |   ALTO:n                  {:RESULT = n;:}
+                            |   ANCHO:n                 {:RESULT = n;:}
+                            |   AUTO_REPRODUCCION:n     {:RESULT = n;:}
                             ;
 
 /***************************   BOTON   ***************************/
 
-    BOTON   ::= open pr_boton ELEMENTOS_BOTON close TEXTO open slash pr_boton close
-            |   open pr_boton ELEMENTOS_BOTON close /*todo*/ open slash pr_boton close
+    BOTON   ::= pr_boton:p ELEMENTOS_BOTON:e nada:c slash pr_boton                {:RESULT = new Boton(e, "", pleft, pright);:}
+            |   pr_boton:p ELEMENTOS_BOTON:e todo:c slash pr_boton                {:RESULT = new Boton(e, c, pleft, pright);:}
+            |   pr_boton:p ELEMENTOS_BOTON:e nada:c TEXTO:t nada slash pr_boton   {:RESULT = new Boton(e, t, pleft, pright);:}
             ;
 
-    ELEMENTOS_BOTON    ::= ELEMENTOS_BOTON ELEMENTO_BOTON
-                        |   ELEMENTO_BOTON
+    ELEMENTOS_BOTON    ::= ELEMENTOS_BOTON:l ELEMENTO_BOTON:n   {:RESULT = l; RESULT.add(n); :}
+                        |   ELEMENTO_BOTON:n                    {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                         ;
 
-    ELEMENTO_BOTON     ::= NOMBRE
-                        |   X
-                        |   Y
-                        |   ALTO
-                        |   ANCHO
-                        |   REFERENCIA
-                        |   ACCION
+    ELEMENTO_BOTON     ::= NOMBRE:n         {:RESULT = n;:}
+                        |   X:n             {:RESULT = n;:}
+                        |   Y:n             {:RESULT = n;:}
+                        |   ALTO:n          {:RESULT = n;:}
+                        |   ANCHO:n         {:RESULT = n;:}
+                        |   REFERENCIA:n    {:RESULT = n;:}
+                        |   ACCION:n        {:RESULT = n;:}
                         ;
 
 /***************************   ENVIAR  ***************************/
 
-    ENVIAR  ::= open pr_enviar ELEMENTOS_ENVIAR close TEXTO open slash pr_enviar close
-            |   open pr_enviar ELEMENTOS_ENVIAR close /*todo*/ open slash pr_enviar close
+    ENVIAR  ::= pr_enviar:p ELEMENTOS_ENVIAR:e nada:c slash pr_enviar                 {:RESULT = new Enviar(e, "", pleft, pright);:}
+            |   pr_enviar:p ELEMENTOS_ENVIAR:e todo:c slash pr_enviar                 {:RESULT = new Enviar(e, c, pleft, pright);:}
+            |   pr_enviar:p ELEMENTOS_ENVIAR:e nada:c TEXTO:t nada slash pr_enviar    {:RESULT = new Enviar(e, t, pleft, pright);:}
             ;
 
-    ELEMENTOS_ENVIAR    ::= ELEMENTOS_ENVIAR ELEMENTO_ENVIAR
-                        |   ELEMENTO_ENVIAR
+    ELEMENTOS_ENVIAR    ::= ELEMENTOS_ENVIAR:l ELEMENTO_ENVIAR:n {:RESULT = l; RESULT.add(n); :}
+                        |   ELEMENTO_ENVIAR:n                    {:RESULT = new LinkedList<Elemento>(); RESULT.add(n); :}
                         ;
 
-    ELEMENTO_ENVIAR     ::= NOMBRE:n
-                        |   X:n
-                        |   Y:n
-                        |   ALTO:n
-                        |   ANCHO:n
-                        |   REFERENCIA:n
-                        |   ACCION:n
+    ELEMENTO_ENVIAR     ::= NOMBRE:n        {:RESULT = n;:}
+                        |   X:n             {:RESULT = n;:}
+                        |   Y:n             {:RESULT = n;:}
+                        |   ALTO:n          {:RESULT = n;:}
+                        |   ANCHO:n         {:RESULT = n;:}
+                        |   ACCION:n        {:RESULT = n;:}
+                        |   REFERENCIA:n    {:RESULT = n;:}
                         ;
 
 /*************************** ELEMENTOS ***************************/
 
-    ID          ::= pr_id:n1 igual:n2 cadena:n3             {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    ID          ::= pr_id:n1 igual:n2 cadena:n3             {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    TIPO        ::= pr_tipo:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    TIPO        ::= pr_tipo:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    COLOR       ::= pr_color:n1 igual:n2 cadena:n3          {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    COLOR       ::= pr_color:n1 igual:n2 cadena:n3          {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    ACCIONINI   ::= pr_accioninicial:n1 igual:n2 llamada:n3 {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    ACCIONINI   ::= pr_accioninicial:n1 igual:n2 llamada:n3 {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    ACCIONFIN   ::= pr_accionfinal:n1 igual:n2 llamada:n3   {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    ACCIONFIN   ::= pr_accionfinal:n1 igual:n2 llamada:n3   {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    X           ::= pr_x:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_x:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    X           ::= pr_x:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_x:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    Y           ::= pr_y:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_y:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    Y           ::= pr_y:n1 igual:n2 entero:n3              {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_y:n1 igual:n2 decimal:n3             {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    ALTO        ::= pr_alto:n1 igual:n2 entero:n3           {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_alto:n1 igual:n2 decimal:n3          {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    ALTO        ::= pr_alto:n1 igual:n2 entero:n3           {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_alto:n1 igual:n2 decimal:n3          {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    ANCHO       ::= pr_ancho:n1 igual:n2 entero:n3          {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :} 
-                |   pr_ancho:n1 igual:n2 decimal:n3         {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    ANCHO       ::= pr_ancho:n1 igual:n2 entero:n3          {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :} 
+                |   pr_ancho:n1 igual:n2 decimal:n3         {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    BORDE       ::= pr_borde:n1 igual:n2 pr_verdadero:n3    {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
-                |   pr_borde:n1 igual:n2 pr_falso:n3        {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+    BORDE       ::= pr_borde:n1 igual:n2 pr_verdadero:n3    {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_borde:n1 igual:n2 pr_falso:n3        {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
                 ;
 
-    NOMBRE      ::= pr_nombre:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    NOMBRE      ::= pr_nombre:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    FUENTE      ::= pr_fuente:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    FUENTE      ::= pr_fuente:n1 igual:n2 cadena:n3         {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    TAM         ::= pr_tam:n1 igual:n2 entero:n3            {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_tam:n1 igual:n2 decimal:n3           {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    TAM         ::= pr_tam:n1 igual:n2 entero:n3            {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_tam:n1 igual:n2 decimal:n3           {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    NEGRITA     ::= pr_negrita:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
-                |   pr_negrita:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+    NEGRITA     ::= pr_negrita:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_negrita:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
                 ;
 
-    CURSIVA     ::= pr_cursiva:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
-                |   pr_cursiva:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+    CURSIVA     ::= pr_cursiva:n1 igual:n2 pr_verdadero:n3  {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
+                |   pr_cursiva:n1 igual:n2 pr_falso:n3      {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
                 ;
 
-    MAXIMO      ::= pr_maximo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_maximo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    MAXIMO      ::= pr_maximo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_maximo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    MINIMO      ::= pr_minimo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Constante.ENTERO, n3, n2left, n2right); :}
-                |   pr_minimo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Constante.DECIMAL, n3, n2left, n2right); :}
+    MINIMO      ::= pr_minimo:n1 igual:n2 entero:n3         {: RESULT = new Elemento(n1, Tipo.ENTERO, n3, n2left, n2right); :}
+                |   pr_minimo:n1 igual:n2 decimal:n3        {: RESULT = new Elemento(n1, Tipo.DECIMAL, n3, n2left, n2right); :}
                 ;
 
-    ACCION      ::= pr_accion:n1 igual:n2 llamada:n3        {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    ACCION      ::= pr_accion:n1 igual:n2 llamada:n3        {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    REFERENCIA  ::= pr_referencia:n1 igual:n2 cadena:n3     {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    REFERENCIA  ::= pr_referencia:n1 igual:n2 cadena:n3     {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    PATH        ::= pr_path:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Constante.CADENA, n3, n2left, n2right); :};
+    PATH        ::= pr_path:n1 igual:n2 cadena:n3           {: RESULT = new Elemento(n1, Tipo.CADENA, n3, n2left, n2right); :};
 
-    AUTO_REPRODUCCION   ::= pr_autoreproduccion:n1 igual:n2 pr_verdadero:n3 {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
-                        |   pr_autoreproduccion:n1 igual:n2 pr_falso:n3     {: RESULT = new Elemento(n1, Constante.BOOLEANO, n3, n2left, n2right); :}
+    AUTO_REPRODUCCION   ::= pr_autoreproduccion:n1 igual:n2 pr_verdadero:n3 {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
+                        |   pr_autoreproduccion:n1 igual:n2 pr_falso:n3     {: RESULT = new Elemento(n1, Tipo.BOOLEANO, n3, n2left, n2right); :}
                         ;
