@@ -325,7 +325,8 @@ public class Controlador implements Ejecutar {
             cadena += Constante.NULO + ", ";
         }
         
-        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+//        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+          cadena += "\"" + nombre.valor + "\" ) ;\n";
     }
     
     public Object generarAreaTexto(Entorno ent)
@@ -414,7 +415,8 @@ public class Controlador implements Ejecutar {
             cadena += Constante.NULO + ", ";
         }
         
-        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+//        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+        cadena += "\"" + nombre.valor + "\" ) ;\n";
     }
     
     public Object generarDesplegable(Entorno ent)
@@ -491,7 +493,8 @@ public class Controlador implements Ejecutar {
         else{
             cadena += Constante.NULO + ", ";
         }
-        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+        cadena += "\"" + nombre.valor + "\" ) ;\n";
+//        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
     }
     
     public Object generarNumerico(Entorno ent)
@@ -579,7 +582,8 @@ public class Controlador implements Ejecutar {
             cadena += Constante.NULO + ", ";
         }
         
-        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
+        cadena += "\"" + nombre.valor + "\" ) ;\n";
+//        cadena += "\"" + nombre.valor + "_" + contenedor.ventana.id.valor + "\" ) ;\n";
     }
 
     @Override

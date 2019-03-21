@@ -63,7 +63,30 @@ public class CallFuncion implements Expresion, Instruccion {
                     fun.parametros.get(i).exp = valores.get(i);
                 }
                 
-                /*Si sirve*/
+                Object res = fun.ejecutar(ent);
+                if(res instanceof Retornar) { Retornar ret = (Retornar)res; if(ret.literal != null) { return ret.literal; } }
+            }
+            else
+            {
+                /*EL NUMERO DE PARAMETROS NO CONCIDE CON LOS VALORES*/
+                String ambito = (ent != null)? ent.ambito: "";
+                otros.Error err = new otros.Error(Constante.FS, Constante.EJECUCION, "", ambito, 
+                    "El numero de parametros no coincide con el de la funcion \"" + id + "\"", Constante.archivo, line, colm);
+                otros.Error.agregarError(err);
+            }
+        }
+        else
+        {
+            /*LA FUNCION NO EXISTE*/
+            String ambito = (ent != null)? ent.ambito: "";
+            otros.Error err = new otros.Error(Constante.FS, Constante.EJECUCION, "", ambito, 
+                    "La funcion \"" + id + "\" no existe en el ambito actual", Constante.archivo, line, colm);
+            otros.Error.agregarError(err);
+        }
+        return new Literal(Tipo.UNDEFINED, Constante.NULO, line, colm);
+    }
+    
+    /*Si sirve*/
 //                Funcion fun = (Funcion) s.valor;
 //                /*PASO DE PARAMETROS*/
 //                for (int i = 0; i < s.no_parametros; i++) {
@@ -77,27 +100,7 @@ public class CallFuncion implements Expresion, Instruccion {
 //                        return new Literal(Tipo.UNDEFINED, Constante.NULO, line, colm);
 //                    }
 //                }
-                
-                Object res = fun.ejecutar(ent);
-                if(res instanceof Retornar) { Retornar ret = (Retornar)res; if(ret.literal != null) { return ret.literal; } }
-            }
-            else
-            {
-                /*EL NUMERO DE PARAMETROS NO CONCIDE CON LOS VALORES*/
-                otros.Error err = new otros.Error(Constante.FS, Constante.EJECUCION, "", ent.ambito, 
-                    "El numero de parametros no coincide con el de la funcion \"" + id + "\"", Constante.archivo, line, colm);
-                otros.Error.agregarError(err);
-            }
-        }
-        else
-        {
-            /*LA FUNCION NO EXISTE*/
-            otros.Error err = new otros.Error(Constante.FS, Constante.EJECUCION, "", ent.ambito, 
-                    "La funcion \"" + id + "\" no existe en el ambito actual", Constante.archivo, line, colm);
-            otros.Error.agregarError(err);
-        }
-        return new Literal(Tipo.UNDEFINED, Constante.NULO, line, colm);
-    }
+    
     
 //    /*DEBO DE BUSCAR LA FUNCION EN EL AMBITO GLOBAL*/
 //        Simbolo s = AstFs.global_fun.getSimbolo_EntActual(id);

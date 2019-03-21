@@ -154,7 +154,8 @@ public class Variable extends Operacion implements Expresion, Instruccion {
                                 Literal l = arr.valores.get(indice);
                                 if(l.valor instanceof Arreglo || l.valor instanceof Objeto)
                                 {
-                                    return new Literal(s.tipo, l.valor, line, colm);
+                                    /*OJO! LE CAMBIE S.TIPO A L.TIPO --SI OCURRE UN ERROR VERFICAR COMO REALIZAR CREAR ARRAY DESDE ARCHIVO*/
+                                    return new Literal(l.tipo, l.valor, line, colm);
                                 }
                                 else
                                 {

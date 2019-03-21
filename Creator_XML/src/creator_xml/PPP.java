@@ -11,6 +11,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import javafx.scene.control.Spinner;
 import javax.swing.JFormattedTextField;
@@ -50,14 +51,22 @@ public class PPP extends JFrame {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 System.out.println("activated");
             }
+            
             @Override
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                System.out.println("closing");
+            public void windowStateChanged(WindowEvent e) {
+                System.out.println("statechange");
             }
+
             @Override
-            public void windowDeactivated(java.awt.event.WindowEvent evt) {
-                System.out.println("deactivate");
+            public void windowClosed(WindowEvent e) {
+                System.out.println("closed");
             }
+            
+            @Override
+            public void windowOpened(WindowEvent e) {
+                System.out.println("opened");
+            }
+            
         });
     }
     
@@ -128,7 +137,7 @@ public class PPP extends JFrame {
         contentPane.add(scroll);
         
         pack();
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         
         

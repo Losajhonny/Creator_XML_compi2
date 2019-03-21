@@ -1,0 +1,107 @@
+package gdato.analizador;
+
+import entorno.Entorno;
+import java_cup.runtime.*;
+import gdato.arbol.*;
+import gdato.arbol.Valor.Tgdato;
+import otros.Constante;
+import java.util.LinkedList;
+
+parser code {:
+
+    public static AstGdato Syntaxtree = null;
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s) {
+        StringBuilder m = new StringBuilder("Error Sintactico");
+        int yline = s.left, ycol = s.right;
+
+        if(s.left >= 0) {
+        	m.append(" en la Linea " + (s.left));
+        	if(s.right >= 0) {
+        		m.append(" Columna " + (s.right));
+        	}
+        	m.append(". No se esperaba este componente: " + s.value + ".");
+        }
+
+        Object valor = (s.value != null)? s.value: "Fin de archivo";
+            otros.Error err = new otros.Error(Constante.GDATO, Constante.SINTACTICO, "", Constante.ent_temporal.ambito, " No se esperaba este componente: " + valor, Constante.archivo, s.left, s.right);
+            otros.Error.agregarError(err);
+
+        //Constante.consola += String.valueOf(m) + "\n";
+    }
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception {
+        syntax_error(s);
+    }
+:}
+
+//--------------------------------------------------------------------------------
+//---------------------------------- TERMINALES ----------------------------------
+//--------------------------------------------------------------------------------
+
+    /*simbolos*/
+    terminal String open,
+    close,
+    slash;
+
+    /*componentes o etiquetas*/
+    terminal String pr_lista,
+    pr_principal;
+
+    terminal String numero, cadena, id;
+
+
+//--------------------------------------------------------------------------------
+//-------------------------------- NO TERMINALES ---------------------------------
+//--------------------------------------------------------------------------------
+
+non terminal Object S;
+
+non terminal AstGdato LISTA;
+
+non terminal LinkedList<Principal> LPRINCIPAL;
+non terminal Principal PRINCIPAL;
+
+non terminal LinkedList<Valor> LVALORES;
+non terminal Valor VALOR;
+
+//--------------------------------------------------------------------------------
+//---------------------------------- GRAMATICA -----------------------------------
+//--------------------------------------------------------------------------------
+
+
+start with S;
+
+    S   ::= LISTA:n     {:Syntaxtree = n;:}
+        |               {:Syntaxtree = new AstGdato();:}
+        ;
+
+    LISTA   ::= open pr_lista:n1 close LPRINCIPAL:n2 open slash pr_lista close      {:RESULT = new AstGdato(n2, n1left, n1right);:}
+            |   open pr_lista:n1 close open slash pr_lista close                    {:RESULT = new AstGdato(n1left, n1right);:}
+            ;
+
+    LPRINCIPAL ::= LPRINCIPAL:n1 PRINCIPAL:n2   {:RESULT = n1; if(n2 != null) { RESULT.add(n2); }:}
+                |  PRINCIPAL:n1                 {:RESULT = new LinkedList(); if(n1 != null) { RESULT.add(n1); }:}
+                ;
+
+    PRINCIPAL   ::= open pr_principal:n1 close LVALORES:n2 open slash pr_principal close    {:RESULT = new Principal(n2, n1left, n1right);:}
+                |   open pr_principal:n1 close open slash pr_principal close                {:RESULT = new Principal(n1left, n1right);:}
+                |   error open slash pr_principal close
+                ;
+
+    LVALORES    ::= LVALORES:n1 VALOR:n2    {:RESULT = n1; if(n2 != null) { RESULT.add(n2); }:}
+                |   VALOR:n1                {:RESULT = new LinkedList(); if(n1 != null) { RESULT.add(n1); }:}
+                ;
+
+    VALOR   ::= open id:n1 close numero:n2 open slash id:n3 close   {:RESULT = new Valor(n1, n2, Tgdato.NUMERO, n3, n1left, n1right);:}
+            |   open id:n1 close cadena:n2 open slash id:n3 close   {:RESULT = new Valor(n1, n2, Tgdato.CADENA, n3, n1left, n1right);:}
+            |   error open slash id close
+            ;
+

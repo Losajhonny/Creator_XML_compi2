@@ -14,6 +14,7 @@ import gxml.arbol.Elemento;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,6 +35,7 @@ public class Ventana implements Ejecutar {
     public JPanel panel;
     
     public boolean isFirst = true;
+    public boolean bandera_visible = true;
     
     public CallFuncion cargando;
     public CallFuncion cerrando;
@@ -224,12 +226,24 @@ public class Ventana implements Ejecutar {
             vent.addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowActivated(java.awt.event.WindowEvent evt) {
-                    cargar(ent);
+                    if(bandera_visible)
+                    {
+                        /*cuando se activa una vez ejecutar*/
+                        bandera_visible = false;
+                        cargar(ent);
+                    }
                 }
+
                 @Override
-                public void windowDeactivated(java.awt.event.WindowEvent evt) {
+                public void windowClosed(WindowEvent e) {
                     cerrar(ent);
                 }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    cerrar(ent);
+                }
+                
             });
             return this;
         }catch(Exception ex){}

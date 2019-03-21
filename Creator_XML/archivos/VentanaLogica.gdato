@@ -1,42 +1,66 @@
 <lista>
-    <principal>
-         <CTNombre>"Julio Arango"</CTNombre>
-         <CHanoi>"Mover 1 a 3 ..."</CHanoi>
-         <CTHF>""</CTHF>
-         <CTHM>""</CTHM>
-         <CTPar>"Par"</CTPar>
-         <CTImpar>"Impar"</CTImpar>
-    </principal>
-    <principal>
-          <CTNombre>"Julia Sierra"</CTNombre>
-         <CHanoi>"Mover 1 a 3 ..."</CHanoi>
-         <CTHF>""</CTHF>
-         <CTHM>""</CTHM>
-         <CTPar>"Par"</CTPar>
-         <CTImpar>"Impar"</CTImpar>
-    </principal>
-    <principal>
-         <CTNombre>"Alba Chinchilla"</CTNombre>
-         <CHanoi>"Mover 1 a 3 ..."</CHanoi>
-         <CTHF>""</CTHF>
-         <CTHM>""</CTHM>
-         <CTPar>"Par"</CTPar>
-         <CTImpar>"Impar"</CTImpar>
-    </principal>
-    <principal>
-         <CTNombre>"Gustavo Gamboa"</CTNombre>
-         <CHanoi>"Mover 1 a 3 ..."</CHanoi>
-         <CTHF>""</CTHF>
-         <CTHM>""</CTHM>
-         <CTPar>"Par"</CTPar>
-         <CTImpar>"Impar"</CTImpar>
-    </principal>
-    <principal>
-         <CTNombre>"Juan Carlos Alberto"</CTNombre>
-         <CHanoi>"Mover 1 a 3 ..."</CHanoi>
-         <CTHF>""</CTHF>
-         <CTHM>""</CTHM>
-         <CTPar>"Par"</CTPar>
-         <CTImpar>"Impar"</CTImpar>
-    </principal>
+	<principal>
+		<CTNombre>"Julio Arango"</CTNombre>
+		<CHanoi>"Mover 1 a 3 ..."</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>"Par"</CTPar>
+		<CTImpar>"Impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Julia Sierra"</CTNombre>
+		<CHanoi>"Mover 1 a 3 ..."</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>"Par"</CTPar>
+		<CTImpar>"Impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Alba Chinchilla"</CTNombre>
+		<CHanoi>"Mover 1 a 3 ..."</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>"Par"</CTPar>
+		<CTImpar>"Impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Gustavo Gamboa"</CTNombre>
+		<CHanoi>"Mover 1 a 3 ..."</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>"Par"</CTPar>
+		<CTImpar>"Impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Juan Carlos Alberto"</CTNombre>
+		<CHanoi>"Mover 1 a 3 ..."</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>"Par"</CTPar>
+		<CTImpar>"Impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Jhonny"</CTNombre>
+		<CHanoi>"prueba"</CHanoi>
+		<CTHF>"fem"</CTHF>
+		<CTHM>"mas"</CTHM>
+		<CTPar>"par"</CTPar>
+		<CTImpar>"impar"</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Ingrese aqui su nombre"</CTNombre>
+		<CHanoi>""</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>""</CTPar>
+		<CTImpar>""</CTImpar>
+	</principal>
+	<principal>
+		<CTNombre>"Ingrese aqui su nombre"</CTNombre>
+		<CHanoi>""</CHanoi>
+		<CTHF>""</CTHF>
+		<CTHM>""</CTHM>
+		<CTPar>""</CTPar>
+		<CTImpar>""</CTImpar>
+	</principal>
 </lista>

@@ -12,6 +12,10 @@ import fs.arbol.Expresion.Literal;
 import fs.arbol.Expresion.Operaciones.Operacion;
 import fs.arbol.Instruccion.Funcion.CallFuncion;
 import fs.arbol.Instruccion.Instruccion;
+import gdato.arbol.AstGdato;
+import gdato.arbol.Principal;
+import gdato.arbol.Valor;
+import gdato.arbol.Valor.Tgdato;
 import gxml.arbol.Ejecutar;
 import gxml.arbol.componente.Boton;
 import gxml.arbol.componente.Controlador;
@@ -20,6 +24,7 @@ import gxml.arbol.componente.Multimedia;
 import gxml.arbol.componente.Texto;
 import gxml.arbol.contenedor.Contenedor;
 import gxml.arbol.contenedor.Ventana;
+import java.io.File;
 import java.util.LinkedList;
 import otros.Constante;
 
@@ -442,10 +447,15 @@ public class Variable_Funcion implements Expresion, Instruccion {
                 {
                     if(Constante.ventana_actual != null)
                     {
+                        if(Constante.ventana_actual.isVisible())
+                        {
+                            Constante.ventana_actual.dispose();
+                        }
                         Constante.ventana_actual.setVisible(false);
                     }
                     
                     Ventana vent = (Ventana) s.componente;
+                    vent.bandera_visible = true;
                     vent.vent.setVisible(true);
                     Constante.ventana_actual = vent.vent;
                 }
@@ -484,6 +494,7 @@ public class Variable_Funcion implements Expresion, Instruccion {
                 {
                     if(Constante.ventana_actual != null)
                     {
+                        Constante.ventana_actual.dispose();
                         Constante.ventana_actual.setVisible(false);
                     }
                 }
@@ -786,48 +797,60 @@ public class Variable_Funcion implements Expresion, Instruccion {
             {
                 Ventana vent = (Ventana)s.componente;
 
-                /*DEBO RECORRER LOS CONTENEDORES Y ENCONTRAR LOS CONTROLADORES*/
-                
-                String cadena = "";
-                
-                for (Contenedor cont : vent.contenedores) {
-                    
-                    for (Ejecutar comp : cont.componentes) {
-                        
-                        if(comp instanceof Controlador)
-                        {
-                            Controlador tmp = (Controlador) comp;
-                            
-                            tmp.validarElementos(null);
-                            
-                            if(tmp.nombre != null)
-                            {
-                                System.out.print("<" + tmp.nombre.valor + ">");
-                                if(tmp.areaTexto != null)
-                                {
-                                    System.out.print("\"" + tmp.areaTexto.getText() + "\"");
-                                }
-                                else if (tmp.cajaTexto != null)
-                                {
-                                    System.out.print("\"" + tmp.cajaTexto.getText() + "\"");
-                                }
-                                else if (tmp.desplegable != null)
-                                {
-                                    System.out.print("\"" + tmp.desplegable.getSelectedItem().toString() + "\"");
-                                }
-                                else if (tmp.numerico != null)
-                                {
-                                    System.out.print(tmp.numerico.getValue().toString());
-                                }
-                                System.out.println("</" + tmp.nombre.valor + ">");
-                            }
-                        }
-                        
-                    }
-                    
+                /*CREAR ARCHIVO Y ANALIZAR GDATO O CREAR UN AST GDATO*/
+                File aux = new File(Constante.path_relativa + vent.id.valor + "." + Constante.GDATO);
+                AstGdato tree = null;
+                if(aux.exists())
+                {
+                    String cadena = creator_xml.Creator_XML.leerArchivo(Constante.path_relativa + vent.id.valor + "." + Constante.GDATO);
+                    tree = creator_xml.Creator_XML.analizarGDATO(vent.id.valor, cadena);
+                }
+                else
+                {
+                    tree = new AstGdato();
                 }
                 
-//                return obj;
+                /*DEBO RECORRER LOS CONTENEDORES Y ENCONTRAR LOS CONTROLADORES*/
+                
+                for (Contenedor cont : vent.contenedores) {
+                    Principal p = new Principal();
+                    for (Ejecutar comp : cont.componentes) {
+                        if(comp instanceof Controlador)
+                        {
+                            Controlador control = (Controlador) comp;
+                            String tag = control.nombre.valor;
+                            String valor = "";
+                            Tgdato tipo = Tgdato.CADENA;
+                            
+                            if(control.areaTexto != null)
+                            {
+                                valor = control.areaTexto.getText().replaceAll("\n", "\\n");
+                            }
+                            else if (control.cajaTexto != null)
+                            {
+                                valor = control.cajaTexto.getText();
+                            }
+                            else if (control.desplegable != null)
+                            {
+                                valor = control.desplegable.getSelectedItem().toString();
+                            }
+                            else if (control.numerico != null)
+                            {
+                                valor = control.numerico.getValue().toString();
+                                tipo = Tgdato.NUMERO;
+                            }
+                            Valor val = new Valor(tag, valor, tipo, tag);
+                            p.valores.add(val);
+                        }
+                    }
+                    if(p.valores.size() > 0 && tree != null)
+                    {
+                        tree.mains.add(p);
+                    }
+                }
+                
+                String cadena = tree.generarCadena();
+                creator_xml.Creator_XML.crearArchivo(Constante.path_relativa + vent.id.valor + "." + Constante.GDATO, cadena);
             }
             else
             {
@@ -848,10 +871,72 @@ public class Variable_Funcion implements Expresion, Instruccion {
     
     private Object execute_crearArchivo(Entorno ent)
     {
+        CrearArrayDesdeArchivo cada = (CrearArrayDesdeArchivo) objeto;
+        Literal res = (Literal) cada.evaluar(ent);
         
-        System.out.println("Crear gdato");
+        if(res.tipo == Operacion.Tipo.CADENA)
+        {
+            String ruta = res.valor.toString();
+            
+            if(ruta.toLowerCase().endsWith("." + Constante.GDATO))
+            {
+                File aux = new File(Constante.path_relativa + ruta);
+                
+                if(aux.exists())
+                {
+                    String cadena = creator_xml.Creator_XML.leerArchivo(Constante.path_relativa + ruta);
+                    AstGdato tree = creator_xml.Creator_XML.analizarGDATO(Constante.path_relativa + ruta, cadena);
+                    
+                    if(tree != null)
+                    {
+                        Expresion exp = (Expresion) tree.generarArreglo();
+                        System.out.println("valor");
+                        return exp;
+                    }
+                    
+                }
+            }
+        }
         
         return new Literal(Operacion.Tipo.UNDEFINED, Constante.NULO, line, colm);
     }
     
 }
+
+
+// for (Contenedor cont : vent.contenedores) {
+//                    
+//for (Ejecutar comp : cont.componentes) {
+//
+//    if(comp instanceof Controlador)
+//    {
+//        Controlador tmp = (Controlador) comp;
+//
+//        tmp.validarElementos(null);
+//
+//        if(tmp.nombre != null)
+//        {
+//            System.out.print("<" + tmp.nombre.valor + ">");
+//            if(tmp.areaTexto != null)
+//            {
+//                System.out.print("\"" + tmp.areaTexto.getText() + "\"");
+//            }
+//            else if (tmp.cajaTexto != null)
+//            {
+//                System.out.print("\"" + tmp.cajaTexto.getText() + "\"");
+//            }
+//            else if (tmp.desplegable != null)
+//            {
+//                System.out.print("\"" + tmp.desplegable.getSelectedItem().toString() + "\"");
+//            }
+//            else if (tmp.numerico != null)
+//            {
+//                System.out.print(tmp.numerico.getValue().toString());
+//            }
+//            System.out.println("</" + tmp.nombre.valor + ">");
+//        }
+//    }
+//
+//}
+//
+//}

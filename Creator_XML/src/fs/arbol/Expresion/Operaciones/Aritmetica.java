@@ -61,16 +61,16 @@ public class Aritmetica extends Operacion implements Expresion {
     public Literal suma(Entorno ent, Literal izq, Literal der){
         Tipo tipo;
         if (izq.tipo == Tipo.ENTERO && der.tipo == Tipo.ENTERO){
-            long v1 = Long.parseLong(String.valueOf(izq.valor));
-            long v2 = Long.parseLong(String.valueOf(der.valor));
+            long v1 = Long.parseLong(izq.valor.toString());
+            long v2 = Long.parseLong(der.valor.toString());
             long v = v1 + v2;
             tipo = Tipo.ENTERO;
             return new Literal(tipo, String.valueOf(v), line, colm);
         }
         else if ((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL) &&
                 (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             double v = v1 + v2;
             tipo = Tipo.DECIMAL;
             return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -78,7 +78,7 @@ public class Aritmetica extends Operacion implements Expresion {
         else if ((izq.tipo == Tipo.BOOLEANO || izq.tipo == Tipo.CADENA)
                 && (der.tipo == Tipo.BOOLEANO || der.tipo == Tipo.CADENA)
                 && !(izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO)){
-            String v = String.valueOf(izq.valor) + String.valueOf(der.valor);
+            String v = izq.valor.toString() + der.valor.toString();
             tipo = Tipo.CADENA;
             return new Literal(tipo, String.valueOf(v), line, colm);
         }
@@ -86,31 +86,31 @@ public class Aritmetica extends Operacion implements Expresion {
                 (der.tipo == Tipo.CADENA || der.tipo == Tipo.DECIMAL)){
             
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    double v1 = (double) getAsciiWord(tmp);
-//                    double v2 = Double.parseDouble(String.valueOf(der.valor));
+//                    double v2 = Double.parseDouble(der.valor.toString());
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 + v2;
 //                    return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
 //                }
 //                else{
-                    String v = String.valueOf(izq.valor) + String.valueOf(der.valor);
+                    String v = izq.valor.toString() + der.valor.toString();
                     tipo = Tipo.CADENA;
                     return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    double v1 = Double.parseDouble(String.valueOf(izq.valor));
+//                    double v1 = Double.parseDouble(izq.valor.toString());
 //                    double v2 = (double) getAsciiWord(tmp);
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 + v2;
 //                    return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
 //                }
 //                else{
-//                    String v = String.valueOf(izq.valor) + String.valueOf(der.valor);
+//                    String v = izq.valor.toString() + der.valor.toString();
 //                    tipo = Tipo.CADENA;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
@@ -119,31 +119,31 @@ public class Aritmetica extends Operacion implements Expresion {
         else if ((izq.tipo == Tipo.CADENA || izq.tipo == Tipo.ENTERO) &&
                 (der.tipo == Tipo.CADENA || der.tipo == Tipo.ENTERO)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    long v1 = getAsciiWord(tmp);
-//                    long v2 = Long.parseLong(String.valueOf(der.valor));
+//                    long v2 = Long.parseLong(der.valor.toString());
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 + v2;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
 //                else{
-                    String v = String.valueOf(izq.valor) + String.valueOf(der.valor);
+                    String v = izq.valor.toString() + der.valor.toString();
                     tipo = Tipo.CADENA;
                     return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    long v1 = Long.parseLong(String.valueOf(izq.valor));
+//                    long v1 = Long.parseLong(izq.valor.toString());
 //                    long v2 = getAsciiWord(tmp);
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 + v2;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
 //                else{
-//                    String v = String.valueOf(izq.valor) + String.valueOf(der.valor);
+//                    String v = izq.valor.toString() + der.valor.toString();
 //                    tipo = Tipo.CADENA;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
 //                }
@@ -163,16 +163,16 @@ public class Aritmetica extends Operacion implements Expresion {
     public Literal resta(Entorno ent, Literal izq, Literal der){
         Tipo tipo;
         if (izq.tipo == Tipo.ENTERO && der.tipo == Tipo.ENTERO){
-            long v1 = Long.parseLong(String.valueOf(izq.valor));
-            long v2 = Long.parseLong(String.valueOf(der.valor));
+            long v1 = Long.parseLong(izq.valor.toString());
+            long v2 = Long.parseLong(der.valor.toString());
             long v = v1 - v2;
             tipo = Tipo.ENTERO;
             return new Literal(tipo, String.valueOf(v), line, colm);
         }
         else if ((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             double v = v1 - v2;
             tipo = Tipo.DECIMAL;
             return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -181,10 +181,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    long v1 =  getAsciiWord(tmp);
-//                    long v2 = Long.parseLong(String.valueOf(der.valor));
+//                    long v2 = Long.parseLong(der.valor.toString());
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 - v2;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
@@ -198,9 +198,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    long v1 = Long.parseLong(String.valueOf(izq.valor));
+//                    long v1 = Long.parseLong(izq.valor.toString());
 //                    long v2 =  getAsciiWord(tmp);
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 - v2;
@@ -219,10 +219,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.DECIMAL || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    double v1 = (double) getAsciiWord(tmp);
-//                    double v2 = Double.parseDouble(String.valueOf(der.valor));
+//                    double v2 = Double.parseDouble(der.valor.toString());
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 - v2;
 //                    return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -236,9 +236,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    double v1 = Double.parseDouble(String.valueOf(izq.valor));
+//                    double v1 = Double.parseDouble(izq.valor.toString());
 //                    double v2 = (double) getAsciiWord(tmp);
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 - v2;
@@ -267,11 +267,11 @@ public class Aritmetica extends Operacion implements Expresion {
     public Literal umenos(Entorno ent, Literal izq){
         switch(izq.tipo){
             case ENTERO:
-                long ve = Long.parseLong(String.valueOf(izq.valor));
+                long ve = Long.parseLong(izq.valor.toString());
                 ve = ve * -1;
                 return new Literal(izq.tipo, String.valueOf(ve), line, colm);
             case DECIMAL:
-                double vd = Double.parseDouble(String.valueOf(izq.valor));
+                double vd = Double.parseDouble(izq.valor.toString());
                 vd = vd * -1;
                 return new Literal(izq.tipo, String.valueOf(Constante.redondear(vd)), line, colm);
             default:
@@ -288,16 +288,16 @@ public class Aritmetica extends Operacion implements Expresion {
     public Literal multiplicacion(Entorno ent, Literal izq, Literal der){
         Tipo tipo;
         if (izq.tipo == Tipo.ENTERO && der.tipo == Tipo.ENTERO){
-            long v1 = Long.parseLong(String.valueOf(izq.valor));
-            long v2 = Long.parseLong(String.valueOf(der.valor));
+            long v1 = Long.parseLong(izq.valor.toString());
+            long v2 = Long.parseLong(der.valor.toString());
             long v = v1 * v2;
             tipo = Tipo.ENTERO;
             return new Literal(tipo, String.valueOf(v), line, colm);
         }
         else if ((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             double v = v1 * v2;
             tipo = Tipo.DECIMAL;
             return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -306,10 +306,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    long v1 =  getAsciiWord(tmp);
-//                    long v2 = Long.parseLong(String.valueOf(der.valor));
+//                    long v2 = Long.parseLong(der.valor.toString());
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 * v2;
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
@@ -323,9 +323,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    long v1 = Long.parseLong(String.valueOf(izq.valor));
+//                    long v1 = Long.parseLong(izq.valor.toString());
 //                    long v2 =  getAsciiWord(tmp);
 //                    tipo = Tipo.ENTERO;
 //                    long v = v1 * v2;
@@ -344,10 +344,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.DECIMAL || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    double v1 = (double) getAsciiWord(tmp);
-//                    double v2 = Double.parseDouble(String.valueOf(der.valor));
+//                    double v2 = Double.parseDouble(der.valor.toString());
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 * v2;
 //                    return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -361,9 +361,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    double v1 = Double.parseDouble(String.valueOf(izq.valor));
+//                    double v1 = Double.parseDouble(izq.valor.toString());
 //                    double v2 = (double) getAsciiWord(tmp);
 //                    tipo = Tipo.DECIMAL;
 //                    double v = v1 * v2;
@@ -393,8 +393,8 @@ public class Aritmetica extends Operacion implements Expresion {
         Tipo tipo;
         if ((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             if(v2 != 0.0){
                 double v = v1 / v2;
                 tipo = Tipo.DECIMAL;
@@ -411,10 +411,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.DECIMAL || der.tipo == Tipo.ENTERO || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    double v1 = (double) getAsciiWord(tmp);
-//                    double v2 = Double.parseDouble(String.valueOf(der.valor));
+//                    double v2 = Double.parseDouble(der.valor.toString());
 //                    if(v2 != 0.0){
 //                        double v = v1 / v2;
 //                        tipo = Tipo.DECIMAL;
@@ -436,9 +436,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    double v1 = Double.parseDouble(String.valueOf(izq.valor));
+//                    double v1 = Double.parseDouble(izq.valor.toString());
 //                    double v2 = (double) getAsciiWord(tmp);
 //                    if(v2 != 0.0){
 //                        double v = v1 / v2;
@@ -475,16 +475,16 @@ public class Aritmetica extends Operacion implements Expresion {
     public Literal potencia(Entorno ent, Literal izq, Literal der){
         Tipo tipo;
         if (izq.tipo == Tipo.ENTERO && der.tipo == Tipo.ENTERO){
-            long v1 = Long.parseLong(String.valueOf(izq.valor));
-            long v2 = Long.parseLong(String.valueOf(der.valor));
+            long v1 = Long.parseLong(izq.valor.toString());
+            long v2 = Long.parseLong(der.valor.toString());
             long v = (long) Math.pow(v1, v2);
             tipo = Tipo.ENTERO;
             return new Literal(tipo, String.valueOf(v), line, colm);
         }
         else if ((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             double v = Math.pow(v1, v2);
             tipo = Tipo.DECIMAL;
             return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -493,10 +493,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    long v1 =  getAsciiWord(tmp);
-//                    long v2 = Long.parseLong(String.valueOf(der.valor));
+//                    long v2 = Long.parseLong(der.valor.toString());
 //                    tipo = Tipo.ENTERO;
 //                    long v = (long) Math.pow(v1, v2);
 //                    return new Literal(tipo, String.valueOf(v), line, colm);
@@ -510,9 +510,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    long v1 = Long.parseLong(String.valueOf(izq.valor));
+//                    long v1 = Long.parseLong(izq.valor.toString());
 //                    long v2 =  getAsciiWord(tmp);
 //                    tipo = Tipo.ENTERO;
 //                    long v = (long) Math.pow(v1, v2);
@@ -531,10 +531,10 @@ public class Aritmetica extends Operacion implements Expresion {
 //                && (der.tipo == Tipo.DECIMAL || der.tipo == Tipo.CADENA)
 //                && !(izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA)){
 //            if (izq.tipo == Tipo.CADENA){
-//                String tmp = String.valueOf(izq.valor);
+//                String tmp = izq.valor.toString();
 //                if (tmp.length() == 1){
 //                    double v1 = (double) getAsciiWord(tmp);
-//                    double v2 = Double.parseDouble(String.valueOf(der.valor));
+//                    double v2 = Double.parseDouble(der.valor.toString());
 //                    tipo = Tipo.DECIMAL;
 //                    double v = Math.pow(v1, v2);
 //                    return new Literal(tipo, String.valueOf(Constante.redondear(v)), line, colm);
@@ -548,9 +548,9 @@ public class Aritmetica extends Operacion implements Expresion {
 //                }
 //            }
 //            else{
-//                String tmp = String.valueOf(der.valor);
+//                String tmp = der.valor.toString();
 //                if (tmp.length() == 1){
-//                    double v1 = Double.parseDouble(String.valueOf(izq.valor));
+//                    double v1 = Double.parseDouble(izq.valor.toString());
 //                    double v2 = (double) getAsciiWord(tmp);
 //                    tipo = Tipo.DECIMAL;
 //                    double v = Math.pow(v1, v2);

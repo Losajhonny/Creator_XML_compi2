@@ -1,0 +1,39 @@
+
+<importar>v1.fs</importar>
+
+<ventana id="v1" tipo="principal" accioninicial={mostrar("Bienvenido a v1")} accionfinal={final()}>
+
+	<contenedor id="c1" x=10 y=20 color="#00bb2d" alto=250 ancho=300>
+
+		<texto nombre="txt1" x=10 y=20>
+			Ingrese su usuario:
+		</texto>
+
+		<control nombre="cont1" tipo="texto" x=160 y=15 alto=30 ancho=100>
+		</control>
+
+		<texto nombre="txt2" x=10 y=50>
+			Ingrese un codigo:
+		</texto>
+
+		<control nombre="cont2" tipo="numerico" x=160 y=45 alto=30 ancho=100 maximo=100 minimo=0>
+		</control>
+
+		<texto nombre="txt3" x=10 y=80>
+			Ingrese un password:
+		</texto>
+
+		<control nombre="cont3" tipo="texto" x=160 y=75 alto=30 ancho=100>
+		</control>
+
+		<enviar nombre="btn1" x=160 y=105 alto=40 ancho=100 >
+		Enviar...
+		</enviar>
+
+		<boton nombre="btn2" x=160 y=155 alto=40 ancho=150 accion={reporte()} >
+		Obtener reporte
+		</boton>
+
+	</contenedor>
+
+</ventana>

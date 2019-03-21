@@ -83,9 +83,6 @@ public class Si implements Instruccion {
     {
         Entorno local = new Entorno(ent);
         
-        /*OBTENER LA EXPRESION DE SSI*/
-        //Literal res = (Literal) ssi.condicion.evaluar(local);
-        
         if( ssi.condicion instanceof Logica || ssi.condicion instanceof Relacional /*res.tipo == Tipo.BOOLEANO /*|| res.tipo == Tipo.ERROR*/)
         {
             Literal res = (Literal) ssi.condicion.evaluar(local);

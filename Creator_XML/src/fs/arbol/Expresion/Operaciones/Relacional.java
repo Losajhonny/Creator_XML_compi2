@@ -44,20 +44,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 == v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 == v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 == v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
@@ -193,20 +193,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 != v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 != v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 != v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
@@ -342,20 +342,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 > v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 > v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 > v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
@@ -420,20 +420,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 < v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 < v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 < v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
@@ -498,20 +498,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 >= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 >= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 >= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
@@ -576,20 +576,20 @@ public class Relacional extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         if((izq.tipo == Tipo.ENTERO || izq.tipo == Tipo.DECIMAL)
                 && (der.tipo == Tipo.ENTERO || der.tipo == Tipo.DECIMAL)){
-            double v1 = Double.parseDouble(String.valueOf(izq.valor));
-            double v2 = Double.parseDouble(String.valueOf(der.valor));
+            double v1 = Double.parseDouble(izq.valor.toString());
+            double v2 = Double.parseDouble(der.valor.toString());
             String res = (v1 <= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.CADENA && der.tipo == Tipo.CADENA){
-            int v1 = getAsciiWord(String.valueOf(izq.valor));
-            int v2 = getAsciiWord(String.valueOf(der.valor));
+            int v1 = getAsciiWord(izq.valor.toString());
+            int v2 = getAsciiWord(der.valor.toString());
             String res = (v1 <= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }
         else if (izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             String res = (v1 <= v2)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
         }

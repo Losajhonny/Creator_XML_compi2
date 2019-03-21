@@ -760,7 +760,7 @@ public class gxmlScanner implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { otros.Error err = new otros.Error(Constante.GXML, Constante.LEXICO, yytext(), "", "Este es un error lexico: "+yytext(), Constante.archivo, yyline, yychar);
-                            Constante.errores.add(err);
+                            otros.Error.agregarError(err);
             }
           case 65: break;
           case 2: 

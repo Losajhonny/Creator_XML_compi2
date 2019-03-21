@@ -47,6 +47,7 @@ public class Constante {
     
     public static String GXML = "gxml";
     public static String FS = "fs";
+    public static String GDATO = "gdato";
     
     public static final String ALTO_VENTANA = "900";
     public static final String ANCHO_VENTANA = "900";

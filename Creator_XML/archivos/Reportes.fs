@@ -12,7 +12,7 @@ funcion ReporteAritmetico(){
 
 funcion ReporteHistorico(){
 	var contenido = CrearArrayDesdeArchivo("VentanaHistoria.gdato");	
-	var TodoCorrecto = contenido.filtrar(RevisionHistoria).map(nombresAritmeticos);;
+	var TodoCorrecto = contenido.filtrar(RevisionHistoria).map(nombresAritmeticos);
 	Imprimir("El primer alumno en contestar todo buen fue ");
 	var primero = contenido.filtrar(RevisionHistoria).Buscar(BuscarHistoria);
 	Imprimir(primero.CTNombre);
@@ -31,6 +31,7 @@ funcion ReporteLogico(){
 	var contenido = CrearArrayDesdeArchivo("VentanaLogica.gdato");
 	Imprimir("Imprimiendo nombres de los estudiantes que saben par e impar"); 
 	var concatenacion = contenido.map(EstudiantesParidad).Reduce(ObtencionParidad);
+	imprimir (concatenacion);
 }
 
 funcion RevisionAritmetica(var item){

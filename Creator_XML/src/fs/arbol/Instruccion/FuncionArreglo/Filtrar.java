@@ -77,7 +77,8 @@ public class Filtrar extends FunNativaArreglo implements Expresion, Instruccion 
                 }
 
                 Arreglo narr = new Arreglo(nuevo);
-                narr.ejecutar(ent);
+                //narr.ejecutar(ent);
+                narr.execute(ent);
                 return new Literal(Tipo.ARREGLO, narr, line, colm);
             }
             return new Literal(Operacion.Tipo.ERROR, Constante.NULO, line, colm);

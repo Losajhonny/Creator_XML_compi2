@@ -42,8 +42,8 @@ public class Logica extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         
         if(izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             int v = v1 * v2;
             String res = (v == 1)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
@@ -63,8 +63,8 @@ public class Logica extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         
         if(izq.tipo == Tipo.BOOLEANO && der.tipo == Tipo.BOOLEANO){
-            int v1 = getBooleano(String.valueOf(izq.valor));
-            int v2 = getBooleano(String.valueOf(der.valor));
+            int v1 = getBooleano(izq.valor.toString());
+            int v2 = getBooleano(der.valor.toString());
             int v = v1 + v2;
             String res = (v >= 1)? getBooleano(1): getBooleano(0);
             return new Literal(tipo, res, line, colm);
@@ -84,7 +84,7 @@ public class Logica extends Operacion implements Expresion {
         Tipo tipo = Tipo.BOOLEANO;
         
         if(izq.tipo == Tipo.BOOLEANO){
-            int v = getBooleano(String.valueOf(izq.valor));
+            int v = getBooleano(izq.valor.toString());
             String res = (v == 1)? getBooleano(0): getBooleano(1);
             return new Literal(tipo, res, line, colm);
         }

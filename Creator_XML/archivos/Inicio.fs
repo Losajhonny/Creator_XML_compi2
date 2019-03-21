@@ -33,39 +33,39 @@ ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Times New Roman", 18, "#000
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 50, falso, falso, "Ingrese su Nombre:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearCajaTexto ( 20, 100, "Arial", 14, "#000000", 100, 50, falso, falso, "Ingrese aqui su nombre", "CTNombre_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearCajaTexto ( 20, 100, "Arial", 14, "#000000", 100, 50, falso, falso, "Ingrese aqui su nombre", "CTNombre" ) ;
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 150, falso, falso, "Ingrese la potencia de 5 a la 5:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 5000, 0, 150, 150, nulo, "CPotencia_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 5000, 0, 150, 150, nulo, "CPotencia" ) ;
 
 var btnPotencia_VentanaAritmetica = ContenedorAritmeticas_VentanaAritmetica.crearBoton( "Arial", 14, "#000000", 300, 150, nulo, "Ver Respuesta", 50, 100 ) ;
 btnPotencia_VentanaAritmetica.alClic( VerPotencia(5,5) ) ;
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 250, falso, falso, "Ingrese el Factorial de 7:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 6000, 0, 150, 250, nulo, "CFactorial_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 6000, 0, 150, 250, nulo, "CFactorial" ) ;
 
 var btnFactorial_VentanaAritmetica = ContenedorAritmeticas_VentanaAritmetica.crearBoton( "Arial", 14, "#000000", 300, 250, nulo, "Ver Respuesta", 50, 100 ) ;
 btnFactorial_VentanaAritmetica.alClic( VerFactorial(7) ) ;
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 350, falso, falso, "Ingrese el numero invertido de 351230347:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, nulo, 0, 150, 350, nulo, "CInvertido_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, nulo, 0, 150, 350, nulo, "CInvertido" ) ;
 
 var btnInvertido_VentanaAritmetica = ContenedorAritmeticas_VentanaAritmetica.crearBoton( "Arial", 14, "#000000", 300, 350, nulo, "Ver Respuesta", 50, 100 ) ;
 btnInvertido_VentanaAritmetica.alClic( VerInvertido(351230347) ) ;
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 450, falso, falso, "Ingrese el mcd de 240,506 con 10:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, nulo, 0, 150, 450, nulo, "CMCD_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, nulo, 0, 150, 450, nulo, "CMCD" ) ;
 
 var btnMCD_VentanaAritmetica = ContenedorAritmeticas_VentanaAritmetica.crearBoton( "Arial", 14, "#000000", 300, 450, nulo, "Ver Respuesta", 50, 100 ) ;
 btnMCD_VentanaAritmetica.alClic( VerMCD(240,506, 10) ) ;
 
 ContenedorAritmeticas_VentanaAritmetica.crearTexto( "Arial", 14, "#000000", 10, 550, falso, falso, "Ingrese el Fibonacci de 19:" );
 
-ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 6000, 0, 150, 550, nulo, "CFibonacci_VentanaAritmetica" ) ;
+ContenedorAritmeticas_VentanaAritmetica.crearControlNumerico ( 50, 100, 6000, 0, 150, 550, nulo, "CFibonacci" ) ;
 
 var btnFibonacci_VentanaAritmetica = ContenedorAritmeticas_VentanaAritmetica.crearBoton( "Arial", 14, "#000000", 300, 550, nulo, "Ver Respuesta", 50, 100 ) ;
 btnFibonacci_VentanaAritmetica.alClic( VerFibonacci(19) ) ;
@@ -88,13 +88,13 @@ ContenedorHistoria_VentanaHistoria.crearTexto( "Times New Roman", 18, "#000000",
 
 ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 20, falso, falso, "Ingrese su Nombre:" );
 
-ContenedorHistoria_VentanaHistoria.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 250, falso, falso, "Ingrese el paisaje de la foto" );
 
 var CDPaisaje1_VentanaHistoria = [ "Playa", "Luna", "Selva", "Desierto", "Oceano" ] ;
 
-ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje1_VentanaHistoria , 150, 250, nulo, "CDPaisaje1_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje1_VentanaHistoria , 150, 250, nulo, "CDPaisaje1" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearImagen( "playa.jpg", 300, 250, 100, 100 ) ;
 
@@ -105,7 +105,7 @@ ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 400, 
 
 var CDPaisaje2_VentanaHistoria = [ "Playa", "Luna", "Selva", "Desierto", "Oceano" ] ;
 
-ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje2_VentanaHistoria , 150, 400, nulo, "CDPaisaje2_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje2_VentanaHistoria , 150, 400, nulo, "CDPaisaje2" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearImagen( "luna.jpg", 300, 400, 100, 100 ) ;
 
@@ -116,7 +116,7 @@ ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 550, 
 
 var CDPaisaje3_VentanaHistoria = [ "Playa", "Luna", "Selva", "Desierto", "Oceano" ] ;
 
-ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje3_VentanaHistoria , 150, 550, nulo, "CDPaisaje3_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje3_VentanaHistoria , 150, 550, nulo, "CDPaisaje3" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearImagen( "selva.jpg", 300, 550, 100, 100 ) ;
 
@@ -127,7 +127,7 @@ ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 700, 
 
 var CDPaisaje4_VentanaHistoria = [ "Playa", "Luna", "Selva", "Desierto", "Oceano" ] ;
 
-ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje4_VentanaHistoria , 150, 700, nulo, "CDPaisaje4_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje4_VentanaHistoria , 150, 700, nulo, "CDPaisaje4" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearImagen( "Desierto.jpg", 300, 700, 100, 100 ) ;
 
@@ -138,7 +138,7 @@ ContenedorHistoria_VentanaHistoria.crearTexto( "Arial", 14, "#000000", 10, 850, 
 
 var CDPaisaje5_VentanaHistoria = [ "Playa", "Luna", "Selva", "Desierto", "Oceano" ] ;
 
-ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje5_VentanaHistoria , 150, 850, nulo, "CDPaisaje5_VentanaHistoria" ) ;
+ContenedorHistoria_VentanaHistoria.crearDesplegable ( 50, 100, CDPaisaje5_VentanaHistoria , 150, 850, nulo, "CDPaisaje5" ) ;
 
 ContenedorHistoria_VentanaHistoria.crearImagen( "oceano.jpg", 300, 850, 100, 100 ) ;
 
@@ -163,20 +163,20 @@ ContenedorIngles_VentanaIngles.crearTexto( "Times New Roman", 18, "#000000", 450
 
 ContenedorIngles_VentanaIngles.crearTexto( "Arial", 14, "#000000", 10, 20, falso, falso, "Ingrese su Nombre:" );
 
-ContenedorIngles_VentanaIngles.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre_VentanaIngles" ) ;
+ContenedorIngles_VentanaIngles.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre" ) ;
 
 ContenedorIngles_VentanaIngles.crearReproductor( "Ackermann.mp3", 450, 50, falso, 50, 100 ) ;
 
 ContenedorIngles_VentanaIngles.crearTexto( "Arial", 14, "#000000", 10, 250, falso, falso, "What algorithm is the audio talking about?" );
 
-ContenedorIngles_VentanaIngles.crearCajaTexto ( 50, 150, "Arial", 14, "#000000", 100, 250, falso, falso, "Ingrese aqui su respuesta", "CTPregunta_VentanaIngles" ) ;
+ContenedorIngles_VentanaIngles.crearCajaTexto ( 50, 150, "Arial", 14, "#000000", 100, 250, falso, falso, "Ingrese aqui su respuesta", "CTPregunta" ) ;
 
 var btnPregunta_VentanaIngles = ContenedorIngles_VentanaIngles.crearBoton( "Arial", 14, "#000000", 300, 250, nulo, "Ver Respuesta", 50, 100 ) ;
 btnPregunta_VentanaIngles.alClic( Pregunta("Tipo") ) ;
 
 ContenedorIngles_VentanaIngles.crearTexto( "Arial", 14, "#000000", 10, 350, falso, falso, "Ingrese el ackerman de 3,11:" );
 
-ContenedorIngles_VentanaIngles.crearControlNumerico ( 50, 100, nulo, 0, 150, 350, nulo, "CAckerman_VentanaIngles" ) ;
+ContenedorIngles_VentanaIngles.crearControlNumerico ( 50, 100, nulo, 0, 150, 350, nulo, "CAckerman" ) ;
 
 var btnAckerman_VentanaIngles = ContenedorIngles_VentanaIngles.crearBoton( "Arial", 14, "#000000", 300, 350, nulo, "Ver Respuesta", 50, 100 ) ;
 btnAckerman_VentanaIngles.alClic( Pregunta("Resultado") ) ;
@@ -199,39 +199,39 @@ ContenedorLogica_VentanaLogica.crearTexto( "Times New Roman", 18, "#000000", 450
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 20, falso, falso, "Ingrese su Nombre:" );
 
-ContenedorLogica_VentanaLogica.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearCajaTexto ( 10, 100, "Arial", 14, "#000000", 100, 20, falso, falso, "Ingrese aqui su nombre", "CTNombre" ) ;
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 150, falso, falso, "Resuelva las torres de Hanoi con 3 discos, origen 1, destino 3 y auxiliar 2" );
 
-ContenedorLogica_VentanaLogica.crearAreaTexto ( 150, 50, "Arial", 14, "#000000", 150, 150, falso, falso, nulo, "CHanoi_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearAreaTexto ( 150, 50, "Arial", 14, "#000000", 150, 150, falso, falso, nulo, "CHanoi" ) ;
 
 var btnHanoi_VentanaLogica = ContenedorLogica_VentanaLogica.crearBoton( "Arial", 14, "#000000", 300, 150, nulo, "Ver Respuesta", 50, 100 ) ;
 btnHanoi_VentanaLogica.alClic( hanoi(3,1,2,3) ) ;
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 350, falso, falso, "Ingrese el Hofstader Femenina 10:" );
 
-ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 350, falso, falso, nulo, "CTHF_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 350, falso, falso, nulo, "CTHF" ) ;
 
 var btnHF_VentanaLogica = ContenedorLogica_VentanaLogica.crearBoton( "Arial", 14, "#000000", 300, 350, nulo, "Ver Respuesta", 50, 100 ) ;
 btnHF_VentanaLogica.alClic( VerFemenina() ) ;
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 450, falso, falso, "Ingrese el Hofstader Maculino 10:" );
 
-ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 450, falso, falso, nulo, "CTHM_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 450, falso, falso, nulo, "CTHM" ) ;
 
 var btnHM_VentanaLogica = ContenedorLogica_VentanaLogica.crearBoton( "Arial", 14, "#000000", 300, 450, nulo, "Ver Respuesta", 50, 100 ) ;
 btnHM_VentanaLogica.alClic( VerMasculino() ) ;
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 550, falso, falso, "Ingrese si 26 es par o impar" );
 
-ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 550, falso, falso, nulo, "CTPar_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 550, falso, falso, nulo, "CTPar" ) ;
 
 var btnPar_VentanaLogica = ContenedorLogica_VentanaLogica.crearBoton( "Arial", 14, "#000000", 300, 550, nulo, "Ver Respuesta", 50, 100 ) ;
 btnPar_VentanaLogica.alClic( VerPar(26) ) ;
 
 ContenedorLogica_VentanaLogica.crearTexto( "Arial", 14, "#000000", 10, 650, falso, falso, "Ingrese si 27 es par o impar" );
 
-ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 650, falso, falso, nulo, "CTImpar_VentanaLogica" ) ;
+ContenedorLogica_VentanaLogica.crearCajaTexto ( 50, 100, "Arial", 14, "#000000", 150, 650, falso, falso, nulo, "CTImpar" ) ;
 
 var btnImpar_VentanaLogica = ContenedorLogica_VentanaLogica.crearBoton( "Arial", 14, "#000000", 300, 650, nulo, "Ver Respuesta", 50, 100 ) ;
 btnImpar_VentanaLogica.alClic( VerImpar(27) ) ;

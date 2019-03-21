@@ -23,7 +23,6 @@ import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import otros.Constante;
-import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 /**
  *
@@ -54,9 +53,6 @@ public class principal extends javax.swing.JFrame {
         
         DefaultTableModel dtm = new DefaultTableModel();
         dtm.setColumnIdentifiers(columns);
-        
-        DefaultTableCellRenderer dtcr = new DefaultTableCellHeaderRenderer();
-        dtcr.setHorizontalAlignment(SwingConstants.CENTER);
         
         for (otros.Error err : Constante.errores) {
             String row[] = { err.fecha_hora, err.lenguaje, 
@@ -166,12 +162,9 @@ public class principal extends javax.swing.JFrame {
         Constante.consola = "";
         Constante.errores.clear();
         actualizarTabla();
-        //guardar();
-        /*
         
-        Lo comento temporalmente por motivos de pruebas
+        jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-información-del-sistema-48.png"))); // NOI18N
         
-        */
         String nombre = tabcontrol.getTitleAt(tabcontrol.getSelectedIndex());
         
         JPanel pan =(JPanel)(tabcontrol.getSelectedComponent());
@@ -185,8 +178,9 @@ public class principal extends javax.swing.JFrame {
             Creator_XML.analizarFS(nombre, texto.getText());
         }
         
-        for (otros.Error err : Constante.errores) {
-            System.out.println(Constante.archivo + "    " + err.lenguaje + " " + err.tipo + " " + err.descripcion + " " + String.valueOf(err.line) + "  " + String.valueOf(err.colm));
+        if(Constante.errores.size() > 0)
+        {
+            jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-informe-del-sistema-48.png"))); // NOI18N
         }
         
         consola.setText(Constante.consola);
@@ -285,6 +279,7 @@ public class principal extends javax.swing.JFrame {
             FileNameExtensionFilter tmp = (FileNameExtensionFilter)jfc.getFileFilter();
             String parent = jfc.getSelectedFile().getParent();
             
+            
             if(parent.endsWith("archivos")){
                 /*aqui debo de guardar el archivo en la carpeta principal*/
                 JPanel pan =(JPanel)(tabcontrol.getSelectedComponent());
@@ -344,6 +339,7 @@ public class principal extends javax.swing.JFrame {
         btn_report = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ExtremeEditor");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
@@ -359,6 +355,8 @@ public class principal extends javax.swing.JFrame {
                 btn_compilarActionPerformed(evt);
             }
         });
+
+        tabcontrol.setToolTipText("");
 
         consola.setColumns(20);
         consola.setRows(5);
@@ -389,8 +387,10 @@ public class principal extends javax.swing.JFrame {
 
         salida_control.addTab("tab2", jScrollPane2);
 
+        jMenu1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-carpeta-de-documentos-48.png"))); // NOI18N
         jMenu1.setText("Archivo");
 
+        btn_abrir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-abrir-documento-48.png"))); // NOI18N
         btn_abrir.setText("Abrir");
         btn_abrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -399,6 +399,7 @@ public class principal extends javax.swing.JFrame {
         });
         jMenu1.add(btn_abrir);
 
+        btn_guardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-guardar-48.png"))); // NOI18N
         btn_guardar.setText("Guardar");
         btn_guardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -407,6 +408,7 @@ public class principal extends javax.swing.JFrame {
         });
         jMenu1.add(btn_guardar);
 
+        btn_guardarcomo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-guardar-como-48.png"))); // NOI18N
         btn_guardarcomo.setText("Guardar Como");
         btn_guardarcomo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -417,8 +419,10 @@ public class principal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-papel-48.png"))); // NOI18N
         jMenu2.setText("Pestaña");
 
+        btn_nuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-agregar-archivo-48.png"))); // NOI18N
         btn_nuevo.setText("Nuevo Tab");
         btn_nuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -427,14 +431,27 @@ public class principal extends javax.swing.JFrame {
         });
         jMenu2.add(btn_nuevo);
 
+        btn_cerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-eliminar-archivo-48.png"))); // NOI18N
         btn_cerrar.setText("Cerrar Tab");
+        btn_cerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_cerrarActionPerformed(evt);
+            }
+        });
         jMenu2.add(btn_cerrar);
 
         jMenuBar1.add(jMenu2);
 
+        jMenu3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-información-del-sistema-48.png"))); // NOI18N
         jMenu3.setText("Errores");
 
+        btn_report.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resource/icons8-error-48.png"))); // NOI18N
         btn_report.setText("Reporte Errores");
+        btn_report.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_reportActionPerformed(evt);
+            }
+        });
         jMenu3.add(btn_report);
 
         jMenuBar1.add(jMenu3);
@@ -446,26 +463,22 @@ public class principal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tabcontrol)
+                    .addComponent(salida_control, javax.swing.GroupLayout.DEFAULT_SIZE, 1185, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(tabcontrol))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(560, 560, 560)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_compilar)
-                        .addGap(0, 553, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(salida_control)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(btn_compilar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tabcontrol, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabcontrol, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(salida_control, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -508,6 +521,20 @@ public class principal extends javax.swing.JFrame {
         // TODO add your handling code here:
         ideclose = true;
     }//GEN-LAST:event_formWindowClosing
+
+    private void btn_reportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_reportActionPerformed
+        // TODO add your handling code here:
+        salida_control.setSelectedIndex(1);
+    }//GEN-LAST:event_btn_reportActionPerformed
+
+    private void btn_cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cerrarActionPerformed
+        // TODO add your handling code here:
+        tabcontrol.removeTabAt(tabcontrol.getSelectedIndex());
+        if(tabcontrol.getTabCount() == 0)
+        {
+            addTab("Nuevo", Constante.GXML);
+        }
+    }//GEN-LAST:event_btn_cerrarActionPerformed
 
     /**
      * @param args the command line arguments

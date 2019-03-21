@@ -9,6 +9,9 @@ import entorno.Entorno;
 import fs.analizador.fsParser;
 import fs.analizador.fsScanner;
 import fs.arbol.AstFs;
+import gdato.analizador.gdatoParser;
+import gdato.analizador.gdatoScanner;
+import gdato.arbol.AstGdato;
 import gxml.analizador.gxmlParser;
 import gxml.analizador.gxmlScanner;
 import gxml.arbol.AstGxml;
@@ -18,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.StringReader;
+import javax.swing.JOptionPane;
 import otros.Constante;
 
 /**
@@ -29,30 +33,41 @@ public class Creator_XML {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        //principal p = new principal();
-        //p.setVisible(true);
-        String pendiente = "Pendientes:\n"
-                + "En Aritmeticas ++, --\n"
-                + "Entonces el caracter no esta debo de qutarlos \"a\" o 'a'\n"
-                + "Solo tipo de dato numero"
-                + "En Relacionales el tipo nulo a == nulo b != nulo\n";
-        
-        
-//        System.out.println(pendiente);
-//        System.out.println("");
-//        System.out.println("Voy realizando la toma de errores la delclaracion");
+//    public static void main(String[] args) {
+//        //principal p = new principal();
+//        //p.setVisible(true);
+////        String pendiente = "Pendientes:\n"
+////                + "En Aritmeticas ++, --\n"
+////                + "Entonces el caracter no esta debo de qutarlos \"a\" o 'a'\n"
+////                + "Solo tipo de dato numero"
+////                + "En Relacionales el tipo nulo a == nulo b != nulo\n";
 //        
-//        double a = Math.pow(100, 100);
 //        
-//        System.out.println(a);
-        
-        int b = 5;
-        double c = fibonacci(19);
-        
-        System.out.println(c);
-        
-    }
+////        System.out.println(pendiente);
+////        System.out.println("");
+////        System.out.println("Voy realizando la toma de errores la delclaracion");
+////        
+////        double a = Math.pow(100, 100);
+////        
+////        System.out.println(a);
+//        
+////        int b = 5;
+////        double c = Ackermann(3,11);
+////        
+////        System.out.println(c);
+//
+//          long inicio, fin, time;
+//          inicio = System.currentTimeMillis();
+//          
+//          Object valor = "hola";
+//          String val = String.valueOf(valor);
+//          System.out.println(val);
+//          
+//          fin = System.currentTimeMillis();
+//          time = fin-inicio;
+//          System.out.println(time);
+//        
+//    }
     
     public static int fibonacci(int n)
     {
@@ -108,6 +123,16 @@ public class Creator_XML {
         {
             return ackermann(m-1, ackermann(m, n-1));
         }
+    }
+    
+    public static int Ackermann(int m, int n)
+    {
+        if (m == 0)
+            return (n + 1);
+       else if (m>0 && n == 0)
+            return (Ackermann(m - 1, 1));
+        else
+            return (Ackermann(m - 1, Ackermann(m, n - 1)));
     }
 //    
 //    public static int ident(int a)
@@ -191,6 +216,8 @@ public class Creator_XML {
                 
                 String traducido = SyntaxTree.generarFs(Constante.global_gxm);
                 crearArchivo(name, traducido);
+                JOptionPane.showMessageDialog(null, "Traduccion Terminada.\nArchivo guardado en "
+                        + nombre.replaceAll(".gxml", ".fs"), "Informacion", JOptionPane.INFORMATION_MESSAGE);
             }
             
             Constante.ent_temporal = tmp;
@@ -200,6 +227,30 @@ public class Creator_XML {
         }
     }
     
+    public static AstGdato analizarGDATO(String nombre, String entrada)
+    {
+        //analizaremos la entrada
+        gdatoScanner lexico = new gdatoScanner(new BufferedReader(new StringReader(entrada)));
+        gdatoParser parser = new gdatoParser(lexico);
+        gdatoParser.Syntaxtree = null;
+        
+        try{
+            Entorno tmp = Constante.ent_temporal;
+            Constante.ent_temporal = new Entorno(null);
+            Constante.ent_temporal.ambito = "global";
+            
+            parser.parse();
+            
+            AstGdato SyntaxTree = gdatoParser.Syntaxtree;
+            
+            Constante.ent_temporal = tmp;
+            return SyntaxTree;
+            
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return null;
+    }
     
     public static void analizarFS(String nombre, String entrada){
         //analizaremos la entrada

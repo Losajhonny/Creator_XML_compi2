@@ -27,8 +27,11 @@ public class Imprimir implements Instruccion{
 
     @Override
     public Object ejecutar(Entorno ent) {
-        
+//        long ini, fin;
+//        ini = System.currentTimeMillis();
         Literal L = (Literal) exp.evaluar(ent);
+//        fin = System.currentTimeMillis();
+//        System.out.println((fin-ini));
         
         /*aqui puede venir un objeto, arreglo o literal
         necesito arreglarlo*/

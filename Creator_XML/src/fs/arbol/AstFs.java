@@ -12,6 +12,9 @@ import fs.arbol.Instruccion.Declaracion.Declaracion;
 import fs.arbol.Instruccion.Detener;
 import fs.arbol.Instruccion.Funcion.CallFuncion;
 import fs.arbol.Instruccion.Funcion.Funcion;
+import fs.arbol.Instruccion.FuncionInterfaz.CrearArrayDesdeArchivo;
+import fs.arbol.Instruccion.FuncionInterfaz.CrearVentana;
+import fs.arbol.Instruccion.FuncionInterfaz.LeerGxml;
 import fs.arbol.Instruccion.FuncionInterfaz.Variable_Funcion;
 import fs.arbol.Instruccion.Instruccion;
 import fs.arbol.Instruccion.Retornar;
@@ -54,7 +57,7 @@ public class AstFs implements Instruccion {
         
         for (Object obj : elementos) {
             if(!(obj instanceof Funcion || obj instanceof CallFuncion || obj instanceof Variable
-                    || obj instanceof Variable_Funcion/*|| obj instanceof Declaracion*/))
+                    || obj instanceof Variable_Funcion || obj instanceof LeerGxml/*|| obj instanceof Declaracion*/))
             {
                 Instruccion tmp = (Instruccion)obj;
                 
@@ -76,8 +79,42 @@ public class AstFs implements Instruccion {
             }
             else if (obj instanceof Variable_Funcion)
             {
-                Expresion exp = (Expresion) obj;
-                exp.evaluar(ent);
+                Variable_Funcion varf = (Variable_Funcion) obj;
+                
+                if(!(varf.objeto instanceof CrearArrayDesdeArchivo ||
+                        varf.objeto instanceof CrearVentana))
+                {
+                    Expresion exp = (Expresion) obj;
+                    exp.evaluar(ent);
+                }
+                else
+                {
+                    if(varf.objeto instanceof CrearVentana)
+                    {
+                        CrearVentana l = (CrearVentana) varf.objeto;
+                        /*error*/
+                        otros.Error err = new otros.Error(Constante.FS, Constante.SINTACTICO, "", ent.ambito,
+                                "No se esperaba la funcion CrearVentana", Constante.archivo, l.line, l.colm);
+                        otros.Error.agregarError(err);
+                    }
+                    else if(varf.objeto instanceof CrearArrayDesdeArchivo)
+                    {
+                        CrearArrayDesdeArchivo l = (CrearArrayDesdeArchivo) varf.objeto;
+                        /*error*/
+                        otros.Error err = new otros.Error(Constante.FS, Constante.SINTACTICO, "", ent.ambito,
+                                "No se esperaba la funcion CrearArrayDesdeArchivo", Constante.archivo, l.line, l.colm);
+                        otros.Error.agregarError(err);
+                    }
+                }
+                
+            }
+            else if (obj instanceof LeerGxml)
+            {
+                LeerGxml l = (LeerGxml) obj;
+                /*error*/
+                otros.Error err = new otros.Error(Constante.FS, Constante.SINTACTICO, "", ent.ambito,
+                        "No se esperaba la funcion LeerGxml", Constante.archivo, l.line, l.colm);
+                otros.Error.agregarError(err);
             }
         }
         

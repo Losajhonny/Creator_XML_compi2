@@ -46,7 +46,7 @@ public class CrearVentana extends FunNativaInterfaz implements Expresion {
                 vent.elementos.add(new Elemento("id", Tipo.CADENA, String.valueOf(e4.valor), line, colm));
                 vent.elementos.add(new Elemento("tipo", Tipo.CADENA, "secundaria", line, colm));
                 
-                vent.generarVentana(null);
+                vent.generarVentana(ent);
                 
                 return new Literal(Tipo.VENTANA, vent, line, colm);
             }

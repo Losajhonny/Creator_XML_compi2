@@ -1,0 +1,22 @@
+<lista>
+	<principal>
+		<cont1>"nombre"</cont1>
+		<cont2>1.0</cont2>
+		<cont3>"pass"</cont3>
+	</principal>
+	<principal>
+		<cont1>"nombre"</cont1>
+		<cont2>2.0</cont2>
+		<cont3>"pass"</cont3>
+	</principal>
+	<principal>
+		<cont1>"nombre"</cont1>
+		<cont2>3.0</cont2>
+		<cont3>"pass"</cont3>
+	</principal>
+	<principal>
+		<cont1>"nombre"</cont1>
+		<cont2>4.0</cont2>
+		<cont3>"pass"</cont3>
+	</principal>
+</lista>

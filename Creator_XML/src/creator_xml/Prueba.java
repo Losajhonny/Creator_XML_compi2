@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
@@ -147,14 +148,21 @@ public class Prueba extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    PPP p = new PPP();
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        vent.setVisible(true);
+//        vent.setVisible(true);
+//        p = new PPP();
+        
+        p.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        vent.setVisible(false);
+        p.dispose();
+        
+        p.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void formWindowStateChanged(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowStateChanged

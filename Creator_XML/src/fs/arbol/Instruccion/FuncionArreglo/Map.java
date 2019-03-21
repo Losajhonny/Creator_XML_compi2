@@ -71,7 +71,8 @@ public class Map extends FunNativaArreglo implements Expresion, Instruccion {
                 }
 
                 Arreglo narr = new Arreglo(nuevo);
-                narr.ejecutar(ent);
+                narr.execute(ent);
+                //narr.ejecutar(ent);
                 return new Literal(Operacion.Tipo.ARREGLO, narr, line, colm);
             }
             return new Literal(Operacion.Tipo.ERROR, Constante.NULO, line, colm);

@@ -73,13 +73,11 @@ public class Funcion implements Instruccion {
         Entorno local = new Entorno(ent);
         /*DEBO DE EJECUTAR LOS PARAMETROS*/
         for (int i = 0; i < parametros.size(); i++) {
-            Expresion exp = (Expresion) parametros.get(i).exp.evaluar(ent);
-            parametros.get(i).exp = exp;
-            parametros.get(i).ejecutar(local);
+            Declaracion dec = parametros.get(i);
+            Expresion exp = (Expresion) dec.exp.evaluar(ent);
+            dec.exp = exp;
+            dec.ejecutar(local);
         }
-//        for (int i = 0; i < parametros.size(); i++) {
-//            parametros.get(i).ejecutar(local);
-//        }
         
         /*EJECUTAR LAS INSTRUCCIONES DE LA FUNCION*/
         for (Instruccion inst : instrucciones) {

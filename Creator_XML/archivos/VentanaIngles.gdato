@@ -1,27 +1,42 @@
 <lista>
-    <principal>
-         <CTNombre>"Julio Arango"</CTNombre>
-         <CTPregunta>"Ackermann"</CTPregunta>
-         <CAckerman>16381</CAckerman>
-    </principal>
-    <principal>
-          <CTNombre>"Julia Sierra"</CTNombre>
-         <CTPregunta>"Ackermann"</CTPregunta>
-         <CAckerman>16381</CAckerman>
-    </principal>
-    <principal>
-         <CTNombre>"Alba Chinchilla"</CTNombre>
-         <CTPregunta>"Ackermann"</CTPregunta>
-         <CAckerman>16381</CAckerman>
-    </principal>
-    <principal>
-         <CTNombre>"Gustavo Gamboa"</CTNombre>
-         <CTPregunta>"Ackermann"</CTPregunta>
-         <CAckerman>16381</CAckerman>
-    </principal>
-    <principal>
-         <CTNombre>"Juan Carlos Alberto"</CTNombre>
-         <CTPregunta>"Ackermann"</CTPregunta>
-         <CAckerman>16381</CAckerman>
-    </principal>
+	<principal>
+		<CTNombre>"Julio Arango"</CTNombre>
+		<CTPregunta>"Ackermann"</CTPregunta>
+		<CAckerman>16381</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Julia Sierra"</CTNombre>
+		<CTPregunta>"Ackermann"</CTPregunta>
+		<CAckerman>16381</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Alba Chinchilla"</CTNombre>
+		<CTPregunta>"Ackermann"</CTPregunta>
+		<CAckerman>16381</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Gustavo Gamboa"</CTNombre>
+		<CTPregunta>"Ackermann"</CTPregunta>
+		<CAckerman>16381</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Juan Carlos Alberto"</CTNombre>
+		<CTPregunta>"Ackermann"</CTPregunta>
+		<CAckerman>16381</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Ingrese aqui su nombre"</CTNombre>
+		<CTPregunta>"Ingrese aqui su respuesta"</CTPregunta>
+		<CAckerman>0.0</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Ingrese aqui su nombre"</CTNombre>
+		<CTPregunta>"Ingrese aqui su respuesta"</CTPregunta>
+		<CAckerman>0.0</CAckerman>
+	</principal>
+	<principal>
+		<CTNombre>"Ingrese aqui su nombre"</CTNombre>
+		<CTPregunta>"Ingrese aqui su respuesta"</CTPregunta>
+		<CAckerman>0.0</CAckerman>
+	</principal>
 </lista>
